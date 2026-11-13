@@ -74,11 +74,7 @@ async function main() {
             color: "#c4c8d0",
           }}
         >
-<<<<<<< HEAD
           <span>BASED IN INDIA / WORKING WORLDWIDE</span>
-=======
-          <span>NEW DELHI / WORKING ACROSS INDIA</span>
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
           <span>thebenzzcreations.com</span>
         </div>
       </div>,

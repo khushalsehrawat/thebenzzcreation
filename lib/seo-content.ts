@@ -1,5 +1,4 @@
 export const SITE_ORIGIN = "https://www.thebenzzcreations.com";
-<<<<<<< HEAD
 export const CONTENT_UPDATED = "2026-11-07";
 export const PRIMARY_MARKETS = [
   "India",
@@ -8,20 +7,14 @@ export const PRIMARY_MARKETS = [
   "United Arab Emirates",
   "Canada",
 ] as const;
-=======
-export const CONTENT_UPDATED = "2026-11-06";
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
 export const BUSINESS = {
   name: "TheBenzzCreations",
   email: "thebenzzcreationsofficial@gmail.com",
   telephone: "+919899788325",
   location: "New Delhi, India",
-<<<<<<< HEAD
   // Add only owner-confirmed profiles for the studio itself, not personal or project pages.
   sameAs: ["https://www.instagram.com/thebenzzcreations/"],
   address: { "@type": "PostalAddress", addressLocality: "New Delhi", addressRegion: "Delhi", addressCountry: "IN" },
-=======
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
 };
 
 export type Service = {
@@ -48,21 +41,12 @@ export const services: Service[] = [
   {
     slug: "website-development",
     name: "Website Development",
-<<<<<<< HEAD
     title: "Website Development Worldwide | TheBenzzCreations",
     description:
       "Custom website development for India, the US, UK, UAE and Canada. Responsive websites and web apps with accessible design, technical SEO and clear enquiry journeys.",
     eyebrow: "Custom websites / Worldwide collaboration",
     intro:
       "A business website should explain your offer, earn attention and make the next step obvious. We design and develop custom websites for businesses worldwide, with a focus on India, the United States, United Kingdom, United Arab Emirates and Canada.",
-=======
-    title: "Website Development in Delhi | TheBenzzCreations",
-    description:
-      "Custom website development in Delhi NCR. Responsive business websites, landing pages and web apps, with accessible design, technical SEO and clear enquiry journeys.",
-    eyebrow: "Custom websites / Delhi NCR & India",
-    intro:
-      "A business website should explain your offer, earn attention and make the next step obvious. We design and develop custom websites from New Delhi for businesses in Delhi NCR and across India.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     paragraphs: [
       "We start with the people using your website: what they need to understand, which questions they bring and how they should contact you. That work shapes the page structure, content hierarchy and navigation before development begins.",
       "The build can include a focused landing page, a multi-page business website, a customer portal or a full-stack web application. React and Next.js are options where they fit; the technical choice follows your content, integrations and maintenance needs.",
@@ -76,11 +60,7 @@ export const services: Service[] = [
       "Forms, CMS or business integrations where scoped",
       "Launch checks and project handover",
     ],
-<<<<<<< HEAD
     fit: "Suitable for businesses launching a website, replacing a restrictive template, or connecting their online presence to an enquiry or service workflow. From our New Delhi base, we collaborate remotely and agree review schedules around your team's time zone.",
-=======
-    fit: "Suitable for businesses launching a website, replacing a restrictive template, or connecting their online presence to an enquiry or service workflow. We collaborate remotely across India and can discuss Delhi NCR projects from our New Delhi base.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     faq: [
       [
         "Can you redesign an existing website?",
@@ -111,21 +91,12 @@ export const services: Service[] = [
   {
     slug: "mobile-app-development",
     name: "Mobile App Development",
-<<<<<<< HEAD
     title: "Mobile App Development Worldwide | TheBenzzCreations",
     description:
       "Android, iOS and React Native app development for India, the US, UK, UAE and Canada. Plan mobile experiences, backend integrations and release requirements.",
     eyebrow: "Android & iOS / Product development",
     intro:
       "Build a mobile experience around a task your customers actually return for. We scope Android, iOS and cross-platform applications for teams worldwide, with remote collaboration across India, the US, UK, UAE and Canada.",
-=======
-    title: "Mobile App Development in Delhi | TheBenzzCreations",
-    description:
-      "Android, iOS and React Native app development from New Delhi. Plan useful mobile experiences, backend integrations and release requirements for your business.",
-    eyebrow: "Android & iOS / Product development",
-    intro:
-      "Build a mobile experience around a task your customers actually return for. We scope Android, iOS and cross-platform applications for businesses in Delhi NCR and remotely throughout India.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     paragraphs: [
       "A useful app starts with a clear core journey: booking a service, placing an order, managing an account or accessing information on the move. We work through the user roles, screens and data requirements before selecting an approach.",
       "React Native can support a shared codebase for Android and iOS where the required features fit. Device capabilities, offline use, notifications, accessibility and existing systems all affect the implementation. We make those decisions against the agreed product requirements.",
@@ -170,21 +141,12 @@ export const services: Service[] = [
   {
     slug: "custom-software-development",
     name: "Custom Software Development",
-<<<<<<< HEAD
     title: "Custom Software Development Worldwide | TheBenzzCreations",
     description:
       "Custom software development for teams worldwide, including India, the US, UK, UAE and Canada. Portals, dashboards and backend systems built around your workflows.",
     eyebrow: "Business software / Connected operations",
     intro:
       "When spreadsheets and disconnected tools create extra work, custom software can bring the process together. We develop business systems for international teams around their roles, information and everyday tasks.",
-=======
-    title: "Custom Software Development in Delhi | TheBenzzCreations",
-    description:
-      "Custom software development for Delhi NCR and India. Business tools, customer portals, dashboards and backend systems shaped around your actual workflows.",
-    eyebrow: "Business software / Connected operations",
-    intro:
-      "When spreadsheets and disconnected tools create extra work, custom software can bring the process together. We develop business systems from New Delhi around your team's roles, information and everyday tasks.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     paragraphs: [
       "We begin by mapping the workflow: where information enters, who changes it, which approvals are required and what a useful output looks like. That helps distinguish essential functionality from features that can wait.",
       "The scope can cover a CRM, inventory system, booking platform, customer portal, administration dashboard or SaaS product. Backend work can use Java / Spring Boot or Node.js as appropriate, with a web interface and integrations matched to the system requirements.",
@@ -198,11 +160,7 @@ export const services: Service[] = [
       "Validation, testing and deployment preparation",
       "Documentation and agreed handover",
     ],
-<<<<<<< HEAD
     fit: "Useful for teams whose operating process does not fit an off-the-shelf tool. We work remotely with businesses in India, the US, UK, UAE, Canada and beyond to define a realistic scope rather than adding complexity for its own sake.",
-=======
-    fit: "Useful for teams whose operating process does not fit an off-the-shelf tool. We work with businesses across Delhi NCR and India to define a realistic scope rather than adding complexity for its own sake.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     faq: [
       [
         "Can you build a CRM or inventory system?",
@@ -241,15 +199,9 @@ export const services: Service[] = [
   {
     slug: "ai-integration-automation",
     name: "AI Integration and Automation",
-<<<<<<< HEAD
     title: "AI Integration & Automation Worldwide | TheBenzzCreations",
     description:
       "AI integration and workflow automation for India, the US, UK, UAE and Canada. Connect assistants, document processing and business tools with human review.",
-=======
-    title: "AI Integration & Automation in Delhi | TheBenzzCreations",
-    description:
-      "Practical AI integration and workflow automation for businesses in Delhi NCR and India. Connect assistants, document processing and existing tools with human review.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     eyebrow: "Existing models / Practical workflows",
     intro:
       "AI is useful when it solves a defined task inside a working process. We integrate existing models and services into business software, websites and workflows, with clear controls and human review where needed.",
@@ -266,11 +218,7 @@ export const services: Service[] = [
       "Evaluation examples and error handling",
       "Usage, access and maintenance guidance",
     ],
-<<<<<<< HEAD
     fit: "For businesses looking to reduce repetitive handoffs or make information easier to use. Discovery and implementation can be carried out remotely worldwide, with data access, provider choices and review responsibilities agreed for your operating context.",
-=======
-    fit: "For businesses looking to reduce repetitive handoffs or make information easier to use. New Delhi is our base; discovery and implementation can be carried out remotely for teams across India.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     faq: [
       [
         "Can AI connect to our existing systems?",
@@ -306,21 +254,12 @@ export const services: Service[] = [
   {
     slug: "ecommerce-development",
     name: "E-Commerce Development",
-<<<<<<< HEAD
     title: "E-Commerce Development Worldwide | TheBenzzCreations",
     description:
       "E-commerce website and app development for India, the US, UK, UAE and Canada. Plan product catalogues, checkout, payment integration and order workflows.",
     eyebrow: "Storefront to fulfilment / Connected commerce",
     intro:
       "An online store needs to work for the person placing an order and the team fulfilling it. We design and develop e-commerce websites and apps for businesses worldwide, planning around their target market, currency and fulfilment needs.",
-=======
-    title: "E-Commerce Development in Delhi | TheBenzzCreations",
-    description:
-      "E-commerce website and app development from New Delhi. Plan clear product catalogues, checkout, payment integration and order workflows for your business.",
-    eyebrow: "Storefront to fulfilment / Connected commerce",
-    intro:
-      "An online store needs to work for the person placing an order and the team fulfilling it. We design and develop e-commerce websites and apps for businesses in Delhi NCR and across India.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     paragraphs: [
       "Product discovery, variants, availability, cart behaviour and checkout all influence the customer journey. We organise the storefront around your catalogue and the information customers need before buying.",
       "Behind the interface, the scope can include payment gateway integration, customer accounts, inventory views, order management and notifications. Platform selection follows your catalogue, integrations and operating process. Merchant accounts, gateway approval and provider charges remain explicit dependencies.",
@@ -337,13 +276,8 @@ export const services: Service[] = [
     fit: "For businesses launching a store, improving an existing checkout or connecting online orders to their internal operation. A catalogue-only site can also be appropriate when purchases are completed through an enquiry.",
     faq: [
       [
-<<<<<<< HEAD
         "Can you integrate payments for our target country?",
         "We can scope a suitable provider when its country availability, supported currencies, APIs and your merchant account support the required flow. Approval, settlement terms and fees are handled with the provider.",
-=======
-        "Can you integrate an Indian payment gateway?",
-        "A suitable provider can be integrated when its APIs and your merchant account support the required flow. Approval, settlement terms and fees are handled with the provider.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
       ],
       [
         "Can the store connect to inventory or order software?",
@@ -369,21 +303,12 @@ export const services: Service[] = [
   {
     slug: "ui-ux-design",
     name: "UI/UX Design",
-<<<<<<< HEAD
     title: "UI/UX Design for Global Teams | TheBenzzCreations",
     description:
       "UI/UX design for teams in India, the US, UK, UAE and Canada. Clear website and app journeys, wireframes, prototypes and interfaces ready for development.",
     eyebrow: "User journeys / Interface systems",
     intro:
       "Good interface design helps people understand what they can do and complete the task in front of them. We design website, mobile and software experiences for international audiences, connecting user needs with practical development.",
-=======
-    title: "UI/UX Design in Delhi | TheBenzzCreations",
-    description:
-      "UI/UX design for websites, mobile apps and software in Delhi NCR and India. Clear user journeys, wireframes, prototypes and interfaces ready for development.",
-    eyebrow: "User journeys / Interface systems",
-    intro:
-      "Good interface design helps people understand what they can do and complete the task in front of them. We design website, mobile and software experiences from New Delhi, connecting user needs with practical development.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     paragraphs: [
       "We review the brief, audience, content and existing experience before drawing screens. Navigation, page hierarchy and important states are explored through journeys and wireframes so the main decisions can be discussed early.",
       "Visual design then establishes typography, colour, spacing, components and responsive behaviour. A prototype can help your team review a booking flow, dashboard or checkout before it is implemented. Loading, empty, error and keyboard-focus states are considered alongside the ideal path.",
@@ -397,11 +322,7 @@ export const services: Service[] = [
       "Interactive prototypes where scoped",
       "Development handover and design review",
     ],
-<<<<<<< HEAD
     fit: "For teams launching a digital product, clarifying a confusing interface or preparing a design for implementation. Remote projects across India, the US, UK, UAE and Canada can be planned around a shared review process and agreed feedback windows.",
-=======
-    fit: "For teams launching a digital product, clarifying a confusing interface or preparing a design for implementation. Delhi NCR and remote India projects can be planned around a shared review process.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     faq: [
       [
         "Can you work with our existing developers?",
@@ -439,21 +360,12 @@ export const services: Service[] = [
   {
     slug: "digital-marketing",
     name: "Digital Marketing",
-<<<<<<< HEAD
     title: "Digital Marketing for Global Businesses | TheBenzzCreations",
     description:
       "Digital marketing for India, the US, UK, UAE and Canada: technical SEO, landing pages, campaign creatives and consent-aware measurement around your goals.",
     eyebrow: "Search, content & measurement / Agreed scope",
     intro:
       "A useful marketing plan connects your offer, content and enquiry journey. We support businesses worldwide with search foundations, landing pages, creative assets and practical measurement tailored to the audiences they want to reach.",
-=======
-    title: "Digital Marketing in Delhi | TheBenzzCreations",
-    description:
-      "Digital marketing support in Delhi NCR and India: technical SEO, landing pages, campaign creatives and consent-aware measurement built around clear business goals.",
-    eyebrow: "Search, content & measurement / Agreed scope",
-    intro:
-      "A useful marketing plan connects your offer, content and enquiry journey. We support businesses in Delhi NCR and across India with search foundations, landing pages, creative assets and practical measurement.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     paragraphs: [
       "We first review the audience, current website, channels and actions that matter to your business. That establishes what to measure and which improvements are worth prioritising before producing more pages or launching campaigns.",
       "Work can include a technical SEO review, service-page content, conversion-focused landing pages, social creatives and launch assets. Metadata, internal linking, crawlability and mobile usability can be addressed together with the development work behind them.",
@@ -467,11 +379,7 @@ export const services: Service[] = [
       "Consent-aware analytics and lead events",
       "Agreed reporting and improvement plan",
     ],
-<<<<<<< HEAD
     fit: "For businesses that need a clearer route from discovery to enquiry. We collaborate remotely with teams in India, the US, UK, UAE and Canada, agreeing target audiences, content responsibilities and measurement before work begins.",
-=======
-    fit: "For businesses that need a clearer route from discovery to enquiry. We are based in New Delhi and can collaborate remotely across India; we do not present additional offices or unverified local business addresses.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     faq: [
       [
         "Can you guarantee a Google ranking?",
@@ -596,28 +504,16 @@ export const corePages = [
   {
     path: "/",
     key: "home",
-<<<<<<< HEAD
     title: "Website & App Development Worldwide | TheBenzzCreations",
     description:
       "Custom websites, mobile apps, software, AI and digital design for businesses worldwide. Working remotely with India, the US, UK, UAE and Canada.",
-=======
-    title: "Website & App Development in Delhi | TheBenzzCreations",
-    description:
-      "New Delhi studio for custom websites, mobile apps, software, AI integration and digital design. Serving Delhi NCR and businesses across India.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
   },
   {
     path: "/services",
     key: "services",
-<<<<<<< HEAD
     title: "Digital Services for Global Businesses | TheBenzzCreations",
     description:
       "Explore web and app development, software, AI, e-commerce, UI/UX and digital marketing for businesses in India, the US, UK, UAE, Canada and worldwide.",
-=======
-    title: "Digital Development Services in Delhi | TheBenzzCreations",
-    description:
-      "Explore website development, mobile apps, custom software, AI automation, e-commerce, UI/UX design and digital marketing from our New Delhi studio.",
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
   },
   {
     path: "/work",
@@ -635,7 +531,6 @@ export const corePages = [
   },
 ];
 
-<<<<<<< HEAD
 export const informationPages = [
   { path: "/pricing", key: "pricing", title: "Project Pricing & Custom Quotes | TheBenzzCreations", description: "Explore website, app and software project options from TheBenzzCreations, what determines a custom quote, and how to request an estimate without logging in." },
   { path: "/about", key: "about", title: "About Our Digital Studio | TheBenzzCreations", description: "Meet TheBenzzCreations, an independent digital studio in New Delhi building websites, apps, software and digital experiences for businesses worldwide." },
@@ -645,9 +540,6 @@ export const informationPages = [
 
 export const publicPages = [
   ...informationPages,
-=======
-export const publicPages = [
->>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
   ...corePages,
   ...services.map((service) => ({
     path: `/services/${service.slug}`,
