@@ -11,6 +11,7 @@ Fourteen social images validated at 1200×630, largest about 36 KB. WOFF2 payloa
 Ignored artifacts: artifacts/seo-report.json, artifacts/browser-report.json, artifacts/seo/*.html, reference screenshots and live-seo-audit.html/live-seo-headers.json. No real enquiries or Google hits were sent. Automated accessibility tests do not certify full accessibility.
 
 No deployment, push, DNS or Google account changes. See [manual handover](seo-implementation.md).
+<<<<<<< HEAD
 
 Worldwide targeting follow-up: regenerated sharing images and production HTML, passed production build, lint, all 17 unit tests, all 51 SEO checks and 28 accessibility scans. Direct raw-HTML checks confirmed the five priority countries, removal of Delhi NCR targeting and accurate New Delhi address on home, service index and all seven services. Original design/runtime code was unchanged by this copy update.
 
@@ -43,3 +44,5 @@ Production build and lint passed. Dedicated geometry checks covered all seven se
 Mobile Showcase now owns vertical drag gestures directly on the preview/text instead of handing them to a nested native scroller. Overflow content is read first, with remaining drag progressing the selected tab. The stage stays pinned through all five previews; the next upward swipe after AI tools moves to the following AI section. Tap selection remains the continuation point; reverse swipes return to the previous preview. Header, consent, form controls, horizontal tab movement, reduced motion and desktop behavior remain excluded/preserved.
 
 Production build and lint passed. The shared Services/Showcase gesture regression passed. New actual-CDP content-origin swipe tests cover 360x640, 390x844 and 412x915: pinned coordinates throughout the full sequence, exit to the next section, tap/reverse continuation and reading a deliberately constrained preview before advancing. No deployment or push.
+=======
+>>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4

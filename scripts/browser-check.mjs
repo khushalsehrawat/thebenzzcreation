@@ -40,7 +40,11 @@ async function home() {
 try {
   await check("Reference design, local assets and aligned hero", async () => {
     await home();
+<<<<<<< HEAD
       assert.match(await page.title(), /Website & App Development Worldwide/);
+=======
+    assert.match(await page.title(), /Website & App Development in Delhi/);
+>>>>>>> 9e1490581b4e85378653d92164c448ef1945e3e4
     await page.waitForTimeout(1800);
     const data = await page.evaluate(() => ({
       three: typeof window.THREE,
