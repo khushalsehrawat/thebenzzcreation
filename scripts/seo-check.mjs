@@ -66,6 +66,29 @@ async function visit(path) {
 }
 
 try {
+
+  await check("FAQ search, keyboard access, deep links and no-JavaScript answers", async () => {
+    await visit("/faq#ownership");
+    assert.equal(await page.locator("#ownership").getAttribute("open"), "");
+    const search = page.getByRole("searchbox");
+    await search.fill("payment");
+    assert.equal(await page.locator("[data-faq]:visible").count(), 1);
+    assert.match(await page.locator("#faq-results").innerText(), /1 answer/);
+    await search.fill("zzzz-no-answer");
+    assert.equal(await page.locator("[data-faq]:visible").count(), 0);
+    await search.fill("");
+    const summary = page.locator("#website-cost summary");
+    await summary.focus(); await page.keyboard.press("Enter");
+    assert.equal(await page.locator("#website-cost").getAttribute("open"), "");
+    const nojs = await browser.newContext({ javaScriptEnabled: false });
+    try {
+      const doc = await nojs.newPage(); await doc.goto(base + "/faq");
+      assert.equal(await doc.locator("[data-faq]").count(), 17);
+      await doc.locator("#ownership summary").click();
+      assert.ok(await doc.locator("#ownership p").isVisible());
+    } finally { await nojs.close(); }
+  });
+
   for (const item of publicPages)
     await check("Prerendered HTML and metadata " + item.path, async () => {
       const response = await context.request.get(base + item.path);

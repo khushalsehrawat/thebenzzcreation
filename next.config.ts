@@ -41,7 +41,8 @@ const nextConfig: NextConfig = {
           ]
         : []),
       { source: "/index.html", destination: "/", permanent: true },
-      ...["process", "faq"].flatMap((section) => [
+      { source: "/faq.html", destination: "/faq", permanent: true },
+      ...["process"].flatMap((section) => [
         { source: `/${section}`, destination: `/#${section}`, permanent: true },
         {
           source: `/${section}.html`,

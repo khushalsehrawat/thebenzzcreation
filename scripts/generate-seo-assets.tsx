@@ -19,6 +19,11 @@ async function main() {
         services: "Design. Development. Connected.",
         work: "Real projects. Clear purpose.",
         privacy: "Your information. Your choices.",
+        faq: "Your project questions, answered.",
+        "global-services": "Based in New Delhi. Working worldwide.",
+        insights: "Plan before you build.",
+        "website-project-brief": "Prepare a better website brief.",
+        "custom-software-vs-off-the-shelf": "Custom software or existing tools?",
       }[page.key] ??
         page.title);
     const response = new ImageResponse(

@@ -27,3 +27,9 @@
 .lt .sub,.lt2 .sub,.lt .sb p,.lt .fq p,.lt2 .st p,.cl .sub{color:#343942}
 #services .sh2>span:not(.service-name){color:#343942}
 #services .sr.on .service-name,#services .sh2:hover .service-name{color:#b51534}
+
+.faq-search{max-width:680px;margin-bottom:2rem}.faq-search label{display:block;margin-bottom:.6rem}.faq-search input{width:100%;min-height:48px;padding:12px;border:1px solid #858c98;border-radius:5px;background:#1c1e22;color:#fff;font:inherit}.faq-search input:focus-visible{outline:2px solid #ff899b;outline-offset:3px}.faq-categories{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:2rem}.faq-categories a,.seo-content .fq a{color:#ff899b;text-underline-offset:4px}.faq-categories a{padding:.5rem 0;min-height:44px}.seo-content [data-faq-category]{padding-block:1.4rem;scroll-margin-top:110px}.fq [data-faq]{scroll-margin-top:110px}.seo-content [hidden]{display:none!important}
+
+/* Contrast and wrapping for existing information-page CTAs and runtime service headings. */
+.seo-legal{overflow-wrap:anywhere}.seo-legal a.btn{color:#fff}.seo-legal a.btn:hover{background:#b51534;border-color:#b51534;color:#fff}
+#services .sr.on .sh2 h3,#services .sh2:hover h3{color:#a4102c}

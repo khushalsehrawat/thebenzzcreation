@@ -184,12 +184,10 @@ try {
   await check("Privacy, sitemap, redirects and 404", async () => {
     assert.equal((await page.goto(base + "/privacy")).status(), 200);
     assert.equal((await page.request.get(base + "/sitemap.xml")).status(), 200);
-    for (const path of [
-      "/about",
-      "/solutions",
-      "/about.html",
-      "/contact",
-    ]) {
+    for (const path of ["/about", "/contact", "/faq", "/global-services", "/insights"]) {
+      assert.equal((await page.request.get(base + path, { maxRedirects: 0 })).status(), 200);
+    }
+    for (const path of ["/solutions", "/process"]) {
       const r = await page.request.get(base + path, { maxRedirects: 0 });
       assert.equal(r.status(), 308);
       assert.match(r.headers().location, /\/#/);

@@ -1,3 +1,4 @@
+import { resourcePages } from "./resources";
 export const SITE_ORIGIN = "https://www.thebenzzcreations.com";
 export const CONTENT_UPDATED = "2026-11-07";
 export const PRIMARY_MARKETS = [
@@ -539,6 +540,7 @@ export const informationPages = [
 ];
 
 export const publicPages = [
+  ...resourcePages,
   ...informationPages,
   ...corePages,
   ...services.map((service) => ({
