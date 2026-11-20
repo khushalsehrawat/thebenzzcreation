@@ -159,6 +159,13 @@ export function renderHead(
     process.env.GOOGLE_SITE_VERIFICATION ??
     "8MsySZqeSGdkv-ve9SoSqPVqLD5NZ5vmL2MfO2t8LVI";
   return `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+</script>
+<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PGV57RK3"></script>
 <title>${escapeHtml(page.title)}</title><meta name="description" content="${escapeHtml(page.description)}">
 <link rel="canonical" href="${url}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta property="og:type" content="website"><meta property="og:site_name" content="TheBenzzCreations"><meta property="og:locale" content="en_IN"><meta property="og:url" content="${url}"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:image" content="${image}"><meta property="og:image:secure_url" content="${image}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${escapeHtml(page.title)}">

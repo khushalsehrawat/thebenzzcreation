@@ -6,9 +6,8 @@ import { GET as home } from "../app/route";
 import { POST as mcp } from "../app/mcp/route";
 import { GET as card } from "../app/.well-known/mcp/server-card.json/route";
 import robots from "../app/robots";
-import sitemap from "../app/sitemap";
 import { llmsText } from "../lib/agents";
-import { BUSINESS, publicPages } from "../lib/seo-content";
+import { BUSINESS, publicPages, SITE_ORIGIN } from "../lib/seo-content";
 import { renderInformation, schemaFor } from "../lib/seo";
 
 test("homepage negotiates Markdown without poisoning the HTML cache", async () => {
@@ -28,7 +27,8 @@ test("homepage negotiates Markdown without poisoning the HTML cache", async () =
 
 test("discovery and schema cover every public page and verified contact details", async () => {
   assert.equal(robots().rules && (robots().rules as { other: Record<string, string> }).other["Content-Signal"], "search=yes, ai-train=no");
-  assert.equal(sitemap().length, publicPages.length);
+  const sitemap = await readFile(new URL("../app/sitemap.xml", import.meta.url), "utf8");
+  for (const page of publicPages) assert.ok(sitemap.includes(`<loc>${SITE_ORIGIN}${page.path}</loc>`));
   for (const page of publicPages) assert.ok(llmsText().includes(page.path));
   const organization = schemaFor(publicPages[0], [["Home", "/"]])["@graph"][0];
   assert.ok("telephone" in organization && "address" in organization);

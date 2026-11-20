@@ -3,7 +3,7 @@ import test from "node:test";
 import { faqs, insights, resourcePages, BRAND_DESCRIPTION } from "../lib/resources";
 import { publicPages, SITE_ORIGIN } from "../lib/seo-content";
 import { renderResource, schemaFor } from "../lib/seo";
-import sitemap from "../app/sitemap";
+import { readFile } from "node:fs/promises";
 
 test("resources render descriptive HTML, canonical metadata and valid entity references", async () => {
   for (const page of resourcePages) {
@@ -31,10 +31,14 @@ test("FAQ answers and ten categories are server-visible with valid contextual de
   assert.ok(html.includes('type="search"'));
 });
 
-test("sitemap covers the registry exactly without unverifiable dates or private endpoints", () => {
-  const entries = sitemap();
-  assert.deepEqual(entries.map((item) => item.url).sort(), publicPages.map((item) => SITE_ORIGIN + item.path).sort());
-  assert.ok(entries.every((item) => !item.lastModified && !/\/api\/|\/mcp|#|\?/.test(item.url)));
+test("supplied sitemap covers public pages and service enquiry URLs", async () => {
+  const xml = await readFile(new URL("../app/sitemap.xml", import.meta.url), "utf8");
+  const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
+  for (const page of publicPages) assert.ok(urls.includes(SITE_ORIGIN + page.path));
+  assert.ok(urls.includes(SITE_ORIGIN + "/llms.txt"));
+  assert.equal(urls.filter((url) => url.includes("?service=")).length, 7);
+  assert.equal(new Set(urls).size, urls.length);
+  assert.ok(urls.every((url) => url.startsWith(SITE_ORIGIN + "/") && !/\/api\/|\/mcp|#/.test(url)));
 });
 
 test("guides have substantial distinct content and factual organization identity", async () => {

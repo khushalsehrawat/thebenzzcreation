@@ -161,15 +161,16 @@ try {
     const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map(
       (match) => match[1],
     );
-    assert.deepEqual(
-      urls.sort(),
-      publicPages.map((item) => SITE_ORIGIN + item.path).sort(),
-    );
+    for (const item of publicPages) {
+      assert.ok(urls.includes(SITE_ORIGIN + item.path));
+    }
+    assert.ok(urls.includes(SITE_ORIGIN + "/llms.txt"));
+    assert.equal(urls.filter((url) => url.includes("?service=")).length, 7);
     assert.equal(new Set(urls).size, urls.length);
     assert.ok(
       !urls.some(
         (url) =>
-          url.includes("#") || url.includes("?") || url.includes("/api/"),
+          url.includes("#") || url.includes("/api/"),
       ),
     );
     const robots = await (
