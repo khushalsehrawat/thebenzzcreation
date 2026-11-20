@@ -512,8 +512,9 @@ try {
         await qaPage.locator("footer [data-analytics-settings]").click();
         await qaPage.locator('[data-choice="granted"]').click();
         await qaPage.waitForTimeout(200);
-        assert.equal(googleRequests.length, 1);
-        assert.ok(googleRequests[0].includes("G-TEST12345"));
+        assert.equal(googleRequests.length, 2);
+        assert.ok(googleRequests.some((url) => url.includes("G-TEST12345")));
+        assert.ok(googleRequests.some((url) => url.includes("GTM-PGV57RK3")));
         await fill();
         await qaPage.locator('#f [type="submit"]').click();
         await qaPage.waitForFunction(
@@ -570,7 +571,7 @@ try {
         );
         assert.equal((await leads()).length, 1);
         await qaPage.reload({ waitUntil: "networkidle" });
-        assert.equal(googleRequests.length, 1);
+        assert.equal(googleRequests.length, 2);
         return {
           noRequestsBeforeConsent: true,
           leadEvents: 1,
@@ -583,7 +584,7 @@ try {
     },
   );
 
-  for (const route of ["/", "/services/website-development"])
+  for (const route of ["/", "/services/website-development", "/blog", "/blog/website-development-cost-2026"])
     await check("Mobile performance lab " + route, async () => {
       const lab = await browser.newContext({
         viewport: { width: 390, height: 844 },

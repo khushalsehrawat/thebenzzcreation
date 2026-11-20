@@ -13,9 +13,9 @@ const themes: Record<string, string> = {
  '/services/digital-marketing': 'technical SEO and digital marketing support',
  '/global-services': 'remote development team for international businesses',
  '/faq': 'website and software development project questions',
- '/insights': 'website and software project planning guides',
- '/insights/website-project-brief': 'what to prepare before hiring a web agency',
- '/insights/custom-software-vs-off-the-shelf': 'custom software vs off-the-shelf tools',
+ '/blog': 'website and software project planning guides',
+ '/blog/website-project-brief': 'what to prepare before hiring a web agency',
+ '/blog/custom-software-vs-off-the-shelf': 'custom software vs off-the-shelf tools',
  '/pricing': 'custom website and software project estimate',
 };
 async function main() {
@@ -26,7 +26,7 @@ for (const page of publicPages) {
  const h1 = html!.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)![1].replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
  const service = services.find(item => path === `/services/${item.slug}`);
  const secondary = service ? service.frontendBullets.join(', ') : path === '/global-services' ? 'US startups, UK businesses, Canadian teams, UAE/Dubai, India, time zones, remote discovery' : path.startsWith('/work') ? 'published project, interface design, website portfolio' : 'project discovery, scope, business workflows';
- const intent = path.startsWith('/insights') || path === '/faq' ? 'Informational / commercial investigation' : ['/privacy','/terms'].includes(path) ? 'Policy / navigational' : path.startsWith('/work') || path === '/about' ? 'Proof / navigational' : 'Commercial / enquiry';
+ const intent = path.startsWith('/blog') || path === '/faq' ? 'Informational / commercial investigation' : ['/privacy','/terms'].includes(path) ? 'Policy / navigational' : path.startsWith('/work') || path === '/about' ? 'Proof / navigational' : 'Commercial / enquiry';
  doc += `| ${path} | ${themes[path] || page.title.split('|')[0].trim()} | ${secondary} | ${intent} | Founders, SMEs and business teams worldwide | ${page.title.replaceAll("|", "&#124;")} | ${h1} | Services, work, FAQ, global delivery, contact; related content contextually | ${['faq','global-services','insights','website-project-brief','custom-software-vs-off-the-shelf'].includes(page.key) ? 'New' : 'Existing; preserved or enhanced'} | Validate query intent; project pages need approved stack, contribution and outcomes before expansion |\n`;
 }
 doc += '\nTechnology intent is consolidated: React/Next.js and full-stack work → website-development; React Native → mobile-app-development; Java/Spring Boot, Node.js, APIs, dashboards → custom-software-development; deployment/maintenance → digital-marketing and FAQ as scoped. No empty technology pages.\n\nRegional themes map to /global-services and the relevant core service, rather than duplicate country pages. Delhi/New Delhi studio identity maps to /about. No physical overseas location is implied. Policy pages serve navigation, not commercial keyword targeting.\n';

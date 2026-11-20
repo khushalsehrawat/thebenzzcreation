@@ -43,7 +43,7 @@ test("supplied sitemap covers public pages and service enquiry URLs", async () =
 
 test("guides have substantial distinct content and factual organization identity", async () => {
   for (const guide of insights) {
-    const page = resourcePages.find((item) => item.path === `/insights/${guide.slug}`)!;
+    const page = resourcePages.find((item) => item.path === `/blog/${guide.slug}`)!;
     const graph = schemaFor(page, [["Home", "/"], [guide.h1, page.path]])["@graph"];
     assert.ok(graph.some((item) => item["@type"] === "Article"));
     assert.ok(guide.sections.map((item) => item[1]).join(" ").length > 1800);

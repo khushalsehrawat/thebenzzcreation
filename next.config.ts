@@ -41,6 +41,7 @@ const nextConfig: NextConfig = {
           ]
         : []),
       { source: "/index.html", destination: "/", permanent: true },
+      { source: "/insights/:path*", destination: "/blog/:path*", permanent: true },
       { source: "/faq.html", destination: "/faq", permanent: true },
       ...["process"].flatMap((section) => [
         { source: `/${section}`, destination: `/#${section}`, permanent: true },

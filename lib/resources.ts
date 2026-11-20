@@ -1,3 +1,6 @@
+import { flagshipArticles } from "./editorial";
+import type { EditorialArticle } from "./editorial-types";
+
 // Editorial dates describe this revision, never a build or request timestamp.
 export const RESOURCE_DATE = "2026-11-18";
 export const BRAND_DESCRIPTION = "TheBenzzCreations is an independent digital development studio based in New Delhi, India, building websites, mobile apps, custom software and automation for businesses worldwide.";
@@ -9,13 +12,13 @@ export const faqs: Faq[] = [
   { id: "wordpress-nextjs", category: "Website Development", question: "What is the difference between WordPress and Next.js?", answer: "WordPress provides a content management system and plugin ecosystem. Next.js is a React framework for custom websites and applications; editing workflows usually require a separate CMS. Choose around publishing needs, custom behaviour and the team responsible for maintenance.", path: "/services/website-development", link: "Explore website development" },
   { id: "rebuild", category: "Website Development", question: "Can you improve or rebuild an existing website?", answer: "Yes. A review can identify which content, URLs and integrations to retain before proposing a redesign. Share the current URL and specific problems so performance, usability and migration work can be scoped.", path: "/work", link: "See published website examples" },
   { id: "idea-to-app", category: "Custom Software", question: "Can you build a web application from an existing business idea?", answer: "An idea can be developed into a brief by identifying users, a core workflow, required data and acceptance criteria. Start with the smallest useful release and investigate integrations before committing to a larger feature list.", path: "/services/custom-software-development", link: "Custom software scope and deliverables" },
-  { id: "software-saas", category: "Custom Software", question: "What is the difference between custom software and SaaS?", answer: "Custom software describes how a product is built for particular requirements. SaaS describes software delivered as an online service, commonly by subscription. A custom-built product can itself be SaaS; the practical decision is whether an existing product fits your workflow.", path: "/insights/custom-software-vs-off-the-shelf", link: "Compare building and buying software" },
+  { id: "software-saas", category: "Custom Software", question: "What is the difference between custom software and SaaS?", answer: "Custom software describes how a product is built for particular requirements. SaaS describes software delivered as an online service, commonly by subscription. A custom-built product can itself be SaaS; the practical decision is whether an existing product fits your workflow.", path: "/blog/custom-software-vs-off-the-shelf", link: "Compare building and buying software" },
   { id: "dashboards", category: "Custom Software", question: "Can you build admin dashboards, inventory systems and customer portals?", answer: "Yes, these workflows can be scoped. Define the user roles, records, permissions, reporting and existing data sources first. Migration and connections to current tools need separate review.", path: "/services/custom-software-development", link: "Explore business systems" },
   { id: "ios-android", category: "Mobile Applications", question: "Can you build Android and iOS apps from one codebase?", answer: "React Native can share much of an application's code across Android and iOS. Device features, platform-specific behaviour and testing still need attention on both platforms. Requirements determine whether that approach fits.", path: "/services/mobile-app-development", link: "Plan a mobile application" },
   { id: "website-or-app", category: "Mobile Applications", question: "How can a startup choose between a website and a mobile app?", answer: "Start with the task and how often users return. A responsive website is accessible through a link and suits discovery and occasional tasks. An app may fit repeat use, notifications or device capabilities when those justify installation and store maintenance.", path: "/services/mobile-app-development", link: "Discuss the right first release" },
   { id: "payments", category: "E-commerce", question: "Can you integrate payment gateways and third-party APIs?", answer: "Integrations can be scoped after reviewing API access, authentication, provider availability and merchant requirements. Payment methods, supported currencies and settlement depend on the provider and your business account.", path: "/services/ecommerce-development", link: "Explore commerce integrations" },
   { id: "automation", category: "AI and Automation", question: "How can AI automation reduce repetitive business work?", answer: "Potential uses include drafting enquiry summaries, classifying documents and retrieving approved internal information. Pick a measurable task, test representative examples and keep human review for consequential decisions. Provider costs and data handling belong in the scope.", path: "/services/ai-integration-automation", link: "Explore practical AI integration" },
-  { id: "estimate", category: "Project Pricing", question: "How do you estimate a development project?", answer: "An estimate starts with goals, user journeys, required features and integrations. Content, access, dependencies, testing and handover also affect effort. Share essential features separately from later ideas to make the proposal easier to compare.", path: "/insights/website-project-brief", link: "Prepare a useful project brief" },
+  { id: "estimate", category: "Project Pricing", question: "How do you estimate a development project?", answer: "An estimate starts with goals, user journeys, required features and integrations. Content, access, dependencies, testing and handover also affect effort. Share essential features separately from later ideas to make the proposal easier to compare.", path: "/blog/website-project-brief", link: "Prepare a useful project brief" },
   { id: "support", category: "Maintenance and Support", question: "What happens after a website or app launches?", answer: "Hosting, monitoring, updates, backups and support responsibilities should be agreed before launch. Maintenance can be discussed as a separate scope. Ask which systems are covered, who holds account access and how future changes are requested.", path: "/contact", link: "Discuss maintenance requirements" },
   { id: "ownership", category: "Maintenance and Support", question: "Do clients own the source code?", answer: "Source-code rights, repository access and handover are contractual terms to confirm in the proposal. Third-party libraries, fonts, plugins and hosted services may have separate licences. Ask for these distinctions before approving a project.", path: "/terms", link: "How project terms are agreed" },
   { id: "international", category: "Working Internationally", question: "Do you work with clients in the United States, UK, Canada, UAE and India?", answer: "TheBenzzCreations accepts remote project enquiries from these markets and worldwide. The studio is based in New Delhi, India. Discuss your time zone, review availability and market requirements during discovery.", path: "/global-services", link: "How international collaboration works" },
@@ -23,7 +26,7 @@ export const faqs: Faq[] = [
   { id: "technology", category: "Technologies and Integrations", question: "Which technologies can you use for a project?", answer: "Published capabilities include React, Next.js, React Native, Node.js and Java / Spring Boot. The choice follows the required interface, integrations, hosting and maintenance needs. A technology name alone does not establish the best fit.", path: "/services", link: "Compare the studio's services" },
 ];
 
-export const insights = [
+const legacyInsights = [
   {
     slug: "website-project-brief", key: "website-project-brief", title: "What to Prepare Before Hiring a Web Agency | TheBenzzCreations",
     description: "Prepare a practical website brief: audience, user journeys, content, integrations, budget, acceptance criteria and launch responsibilities before requesting quotes.",
@@ -56,9 +59,27 @@ export const insights = [
   },
 ];
 
+export const insights: EditorialArticle[] = [
+  ...flagshipArticles,
+  ...legacyInsights.map((article): EditorialArticle => ({
+    ...article,
+    answer: article.intro,
+    category: article.service === "website-development" ? "Development Guides" : "Business Software",
+    published: RESOURCE_DATE,
+    updated: RESOURCE_DATE,
+    sections: article.sections.map(([heading, text]) => [heading, `<p>${text}</p>`]),
+    faqs: [],
+    sources: [],
+    related: article.service === "website-development"
+      ? ["website-development-cost-2026", "wordpress-vs-nextjs-vs-shopify", "software-needed-to-start-a-business"]
+      : ["software-needed-to-start-a-business", "ai-automation-for-small-business", "mobile-app-development-cost-2026"],
+    cta: "Bring your requirements and existing systems to a project discussion.",
+  })),
+];
+
 export const resourcePages = [
   { path: "/faq", key: "faq", title: "Development & Project FAQs | TheBenzzCreations", description: "Answers about websites, mobile apps, software, e-commerce, AI integration, project estimates, support and working remotely with TheBenzzCreations worldwide." },
   { path: "/global-services", key: "global-services", title: "International Development Services | TheBenzzCreations", description: "Work remotely with our New Delhi development studio from the US, UK, Canada, UAE, India or elsewhere. Plan scope, reviews, integrations and project handover." },
-  { path: "/insights", key: "insights", title: "Website & Software Planning Guides | TheBenzzCreations", description: "Practical guides to preparing a website project brief and choosing between custom software and existing tools, with questions to bring to project discovery." },
-  ...insights.map((item) => ({ path: `/insights/${item.slug}`, key: item.key, title: item.title, description: item.description })),
+  { path: "/blog", key: "insights", title: "Business Technology & Development Guides | TheBenzzCreations", description: "Practical website, app, e-commerce and AI automation guides for business owners: compare platforms, plan budgets and choose the right systems before building." },
+  ...insights.map((item) => ({ path: `/blog/${item.slug}`, key: item.key, title: item.title, description: item.description })),
 ];

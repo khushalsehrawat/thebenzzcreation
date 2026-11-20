@@ -11,9 +11,11 @@
     "test": "tsx --test tests/*.test.ts",
     "test:browser": "node scripts/browser-check.mjs",
     "assets:seo": "tsx scripts/generate-seo-assets.tsx",
-    "prebuild": "npm run assets:seo",
+    "sitemap:sync": "tsx scripts/sync-blog-sitemap.ts",
+    "prebuild": "npm run sitemap:sync && npm run assets:seo",
     "predev": "npm run assets:seo",
-    "test:seo": "tsx scripts/seo-check.mjs"
+    "test:seo": "tsx scripts/seo-check.mjs",
+    "test:blog": "tsx scripts/blog-check.ts"
   },
   "dependencies": {
     "next": "16.4.5",

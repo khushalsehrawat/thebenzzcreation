@@ -88,7 +88,7 @@
        <priority>0.8000</priority>
   </url>
   <url>
-       <loc>https://www.thebenzzcreations.com/insights</loc>
+       <loc>https://www.thebenzzcreations.com/blog</loc>
        <lastmod>2026-11-20T10:53:23+00:00</lastmod>
        <priority>0.8000</priority>
   </url>
@@ -148,13 +148,43 @@
        <priority>0.6400</priority>
   </url>
   <url>
-       <loc>https://www.thebenzzcreations.com/insights/website-project-brief</loc>
+       <loc>https://www.thebenzzcreations.com/blog/website-project-brief</loc>
        <lastmod>2026-11-18T00:00:00+00:00</lastmod>
        <priority>0.6400</priority>
   </url>
   <url>
-       <loc>https://www.thebenzzcreations.com/insights/custom-software-vs-off-the-shelf</loc>
+       <loc>https://www.thebenzzcreations.com/blog/custom-software-vs-off-the-shelf</loc>
        <lastmod>2026-11-18T00:00:00+00:00</lastmod>
        <priority>0.6400</priority>
+  </url>
+  <url>
+    <loc>https://www.thebenzzcreations.com/blog/software-needed-to-start-a-business</loc>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.7000</priority>
+  </url>
+  <url>
+    <loc>https://www.thebenzzcreations.com/blog/website-development-cost-2026</loc>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.7000</priority>
+  </url>
+  <url>
+    <loc>https://www.thebenzzcreations.com/blog/wordpress-vs-nextjs-vs-shopify</loc>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.7000</priority>
+  </url>
+  <url>
+    <loc>https://www.thebenzzcreations.com/blog/mobile-app-development-cost-2026</loc>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.7000</priority>
+  </url>
+  <url>
+    <loc>https://www.thebenzzcreations.com/blog/shopify-vs-woocommerce-vs-custom-ecommerce</loc>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.7000</priority>
+  </url>
+  <url>
+    <loc>https://www.thebenzzcreations.com/blog/ai-automation-for-small-business</loc>
+    <lastmod>2026-11-20</lastmod>
+    <priority>0.7000</priority>
   </url>
 </urlset>

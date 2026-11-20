@@ -1,4 +1,4 @@
-﻿import { chromium } from "playwright";
+import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -184,7 +184,7 @@ try {
   await check("Privacy, sitemap, redirects and 404", async () => {
     assert.equal((await page.goto(base + "/privacy")).status(), 200);
     assert.equal((await page.request.get(base + "/sitemap.xml")).status(), 200);
-    for (const path of ["/about", "/contact", "/faq", "/global-services", "/insights"]) {
+    for (const path of ["/about", "/contact", "/faq", "/global-services", "/blog"]) {
       assert.equal((await page.request.get(base + path, { maxRedirects: 0 })).status(), 200);
     }
     for (const path of ["/solutions", "/process"]) {

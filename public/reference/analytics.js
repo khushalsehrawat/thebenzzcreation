@@ -61,6 +61,12 @@
     if (!loaded) {
       loaded = true;
       window.gtag("js", new Date());
+      window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+      const container = document.createElement("script");
+      container.async = true;
+      container.src = "https://www.googletagmanager.com/gtm.js?id=GTM-PGV57RK3";
+      container.dataset.consent = "analytics";
+      document.head.append(container);
       window.gtag("config", id, {
         send_page_view: false,
         allow_google_signals: false,

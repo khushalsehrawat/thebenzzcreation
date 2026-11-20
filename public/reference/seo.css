@@ -34,3 +34,4 @@
 .seo-legal{overflow-wrap:anywhere}.seo-legal a.btn{color:#fff}.seo-legal a.btn:hover{background:#b51534;border-color:#b51534;color:#fff}
 #services .sr.on .sh2 h3,#services .sh2:hover h3{color:#a4102c}
 .faq-all{margin-top:1.75rem}
+.links{gap:clamp(.65rem,1.2vw,1.2rem)}

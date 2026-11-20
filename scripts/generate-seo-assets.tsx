@@ -24,6 +24,12 @@ async function main() {
         insights: "Plan before you build.",
         "website-project-brief": "Prepare a better website brief.",
         "custom-software-vs-off-the-shelf": "Custom software or existing tools?",
+        "software-needed-to-start-a-business": "Your business. The right systems.",
+        "website-development-cost-2026": "What should your website cost?",
+        "ai-automation-for-small-business": "15 workflows. Less repetitive work.",
+        "wordpress-vs-nextjs-vs-shopify": "Choose the platform that fits.",
+        "mobile-app-development-cost-2026": "Scope the app. Plan the budget.",
+        "shopify-vs-woocommerce-vs-custom-ecommerce": "Build a store you can operate.",
       }[page.key] ??
         page.title);
     const response = new ImageResponse(
@@ -95,6 +101,12 @@ async function main() {
       .jpeg({ quality: 88, mozjpeg: true })
       .toBuffer();
     await writeFile(path.join("public/social", `${page.key}.jpg`), output);
+    if (page.path.startsWith("/blog/")) {
+      for (const width of [480, 800, 1200]) {
+        await sharp(output).resize({ width }).webp({ quality: 82 })
+          .toFile(path.join("public/social", `${page.key}-${width}.webp`));
+      }
+    }
   }
   for (const project of projects) {
     const source = `public/images/${project.image}-source.png`;

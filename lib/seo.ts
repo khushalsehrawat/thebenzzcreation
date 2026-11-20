@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { BRAND_DESCRIPTION, faqs, insights, RESOURCE_DATE } from "./resources";
+import { BRAND_DESCRIPTION, faqs, insights } from "./resources";
+import { renderEditorialArticle, renderEditorialIndex } from "./editorial-view";
 import {
   BUSINESS,
   CONTENT_UPDATED,
@@ -122,11 +123,26 @@ export function schemaFor(
         : ["/", "/services"].includes(page.path)
           ? services.map(serviceNode)
           : []),
-      ...insights.filter((item) => page.path === `/insights/${item.slug}`).map((item) => ({
+      ...insights.filter((item) => page.path === `/blog/${item.slug}`).map((item) => ({
         "@type": "Article", "@id": `${url}#article`, headline: item.h1,
-        description: item.description, datePublished: RESOURCE_DATE, dateModified: RESOURCE_DATE,
+        description: item.description, datePublished: item.published, dateModified: item.updated,
         mainEntityOfPage: { "@id": `${url}#webpage` }, publisher: { "@id": organizationId },
         image: `${SITE_ORIGIN}/social/${page.key}.jpg`, inLanguage: "en",
+        articleSection: item.category, isPartOf: { "@id": `${SITE_ORIGIN}/blog#blog` },
+        ...(item.faqs.length ? { hasPart: { "@id": `${url}#faq` } } : {}),
+      })),
+      ...(page.path === "/blog" ? [{
+        "@type": "Blog", "@id": `${SITE_ORIGIN}/blog#blog`,
+        url, name: "TheBenzzCreations Blog", description: page.description,
+        publisher: { "@id": organizationId }, isPartOf: { "@id": websiteId },
+        blogPost: insights.map((item) => ({ "@id": `${SITE_ORIGIN}/blog/${item.slug}#article` })),
+      }] : []),
+      ...insights.filter((item) => page.path === `/blog/${item.slug}` && item.faqs.length).map((item) => ({
+        "@type": "FAQPage", "@id": `${url}#faq`, isPartOf: { "@id": `${url}#webpage` },
+        mainEntity: item.faqs.map(({ question, answer }) => ({
+          "@type": "Question", name: question,
+          acceptedAnswer: { "@type": "Answer", text: answer },
+        })),
       })),
       ...(page.path === "/services"
         ? [
@@ -159,13 +175,6 @@ export function renderHead(
     process.env.GOOGLE_SITE_VERIFICATION ??
     "8MsySZqeSGdkv-ve9SoSqPVqLD5NZ5vmL2MfO2t8LVI";
   return `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
-</script>
-<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PGV57RK3"></script>
 <title>${escapeHtml(page.title)}</title><meta name="description" content="${escapeHtml(page.description)}">
 <link rel="canonical" href="${url}"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta property="og:type" content="website"><meta property="og:site_name" content="TheBenzzCreations"><meta property="og:locale" content="en_IN"><meta property="og:url" content="${url}"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:image" content="${image}"><meta property="og:image:secure_url" content="${image}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${escapeHtml(page.title)}">
@@ -177,17 +186,20 @@ ${homepage ? '<link rel="alternate" type="text/markdown" href="/index.md">' : ""
 <link rel="preload" href="/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/manrope-variable.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.classList.replace('no-js','js')</script>
 <link rel="stylesheet" href="/reference/fonts.css"><link rel="stylesheet" href="/reference/design.css"><link rel="stylesheet" href="/reference/alignment.css"><link rel="stylesheet" href="/reference/seo.css">
+${page.path.startsWith("/blog") ? '<link rel="stylesheet" href="/reference/editorial.css">' : ""}
 <script type="application/ld+json">${safeJson(schemaFor(page, breadcrumb, service))}</script>
 <script type="application/json" id="site-analytics-config">${safeJson(analyticsConfig())}</script><script defer src="/reference/analytics.js"></script>
 ${homepage ? '<script defer src="/reference/background-loader.js"></script>' : ""}`;
 }
 
 function seoFooter() {
-  return `<div class="wrap seo-footer-links"><nav aria-label="Service information">${services.map((item) => `<a href="/services/${item.slug}">${escapeHtml(item.name)}</a>`).join("")}</nav><div><a href="/services">All services</a><a href="/work">Project details</a><a href="/about">About</a><a href="/contact">Contact</a><a href="/pricing">Pricing</a><a href="/global-services">Working internationally</a><a href="/faq">FAQ</a><a href="/insights">Planning guides</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><button type="button" class="analytics-settings" data-analytics-settings hidden>Analytics settings</button></div></div>`;
+  return `<div class="wrap seo-footer-links"><nav aria-label="Service information">${services.map((item) => `<a href="/services/${item.slug}">${escapeHtml(item.name)}</a>`).join("")}</nav><div><a href="/services">All services</a><a href="/work">Project details</a><a href="/about">About</a><a href="/contact">Contact</a><a href="/pricing">Pricing</a><a href="/global-services">Working internationally</a><a href="/faq">FAQ</a><a href="/blog">Blog</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><button type="button" class="analytics-settings" data-analytics-settings hidden>Analytics settings</button></div></div>`;
 }
 
 const readTemplate = () =>
-  readFile(path.join(process.cwd(), "site", "index.html"), "utf8");
+  readFile(path.join(process.cwd(), "site", "index.html"), "utf8").then((html) =>
+    html.replace('<a href="#faq">FAQ</a>', '<a href="/blog">Blog</a><a href="#faq">FAQ</a>'),
+  );
 
 export function serviceRows() {
   return services
@@ -234,7 +246,7 @@ export async function renderHome() {
       `${externalLink}<a class="project-details-link" href="/work/${project.slug}" aria-label="Project details: ${escapeHtml(project.name)}">Project details <span aria-hidden="true">↗</span></a>`,
     );
   });
-  html = html.replace('</main>', '<section class="wrap seo-content"><h2>Build with a team that works worldwide.</h2><p>From New Delhi, we welcome project enquiries from the United States, United Kingdom, Canada, UAE including Dubai, India and beyond. Agree the scope, review schedule and launch responsibilities before development begins.</p><a class="seo-text-link" href="/global-services">How international delivery works</a><a class="seo-text-link" href="/faq">Read project FAQs</a><a class="seo-text-link" href="/insights">Prepare your project</a></section></main>');
+  html = html.replace('</main>', '<section class="wrap seo-content"><h2>Build with a team that works worldwide.</h2><p>From New Delhi, we welcome project enquiries from the United States, United Kingdom, Canada, UAE including Dubai, India and beyond. Agree the scope, review schedule and launch responsibilities before development begins.</p><a class="seo-text-link" href="/global-services">How international delivery works</a><a class="seo-text-link" href="/faq">Read project FAQs</a><a class="seo-text-link" href="/blog">Prepare your project</a></section></main>');
   html = html.replace("</footer>", `${seoFooter()}</footer>`);
   html = html.replace('</head>', '<link rel="stylesheet" href="/reference/service-scroll.css"></head>');
   html = html.replace('</body>', '<script defer src="/reference/service-scroll.js"></script></body>');
@@ -267,7 +279,9 @@ export async function pageShell(
       .match(/<footer[\s\S]*?<\/footer>/)?.[0]
       .replace(/href="#/g, 'href="/#')
       .replace("</footer>", `${seoFooter()}</footer>`) || "";
-  return `<!DOCTYPE html><html lang="en" class="no-js"><head>${renderHead(page, crumbs, service)}</head><body id="top" class="seo-page"><a class="skip" href="#main">Skip to content</a>${header}<main id="main" tabindex="-1"><div class="wrap">${breadcrumbs(crumbs)}</div>${content}</main>${footer}<script defer src="/reference/navigation.js"></script></body></html>`;
+  const guides = service ? insights.filter((item) => item.service === service.slug) : [];
+  const reading = guides.length ? `<section class="wrap seo-content"><h2>Plan before you build</h2><div class="seo-service-grid">${guides.map((item) => `<article class="seo-card"><h3><a href="/blog/${item.slug}">${escapeHtml(item.h1)}</a></h3><p>${escapeHtml(item.description)}</p></article>`).join("")}</div></section>` : "";
+  return `<!DOCTYPE html><html lang="en" class="no-js"><head>${renderHead(page, crumbs, service)}</head><body id="top" class="seo-page"><a class="skip" href="#main">Skip to content</a>${header}<main id="main" tabindex="-1"><div class="wrap">${breadcrumbs(crumbs)}</div>${content}${reading}</main>${footer}<script defer src="/reference/navigation.js"></script></body></html>`;
 }
 
 function serviceCards(items: Service[]) {
@@ -383,7 +397,7 @@ export async function renderInformation(pathname: string) {
     : pathname === "/about"
     ? `<h1>About TheBenzzCreations</h1><p>${BRAND_DESCRIPTION}</p><h2>Design and engineering in one scope</h2><p>Published capabilities include React and Next.js websites, React Native applications, Node.js and Java / Spring Boot backends, business dashboards, e-commerce and AI integration. The technology follows your users, workflow and maintenance requirements.</p><h2>Published work</h2><p>Explore <a href="/work/nsar-workshop">NSAR Workshop</a>, <a href="/work/swiftpdf">SwiftPDF</a> and a <a href="/work/therapist-website">therapist website</a>. These pages describe published interfaces without claiming unverified customer results.</p><h2>Working across borders</h2><p>We welcome enquiries from the United States, United Kingdom, Canada, UAE including Dubai, India and other markets. Review overlap, channels and milestones are agreed for each engagement. <a href="/global-services">See how to plan international delivery</a>.</p><p>Explore our <a href="/services">services</a>, <a href="/work">published projects</a> and <a href="/#process">process</a>.</p>${contact}`
     : pathname === "/contact"
-      ? `<h1>Contact TheBenzzCreations</h1><p>Share your business need, intended users, country or time zone and important dates so we can discuss scope and the next step. Include essential features and any existing systems that need to connect. Budget and timeline details are optional; every estimate follows a scope review. Please avoid sending passwords or sensitive customer data. See our <a href="/privacy">privacy policy</a> for enquiry handling and <a href="/insights/website-project-brief">project brief guide</a> for a useful starting point.</p>${contact}`
+      ? `<h1>Contact TheBenzzCreations</h1><p>Share your business need, intended users, country or time zone and important dates so we can discuss scope and the next step. Include essential features and any existing systems that need to connect. Budget and timeline details are optional; every estimate follows a scope review. Please avoid sending passwords or sensitive customer data. See our <a href="/privacy">privacy policy</a> for enquiry handling and <a href="/blog/website-project-brief">project brief guide</a> for a useful starting point.</p>${contact}`
       : `<h1>Website terms of use</h1><p>Updated ${CONTENT_UPDATED}.</p><h2>Website information</h2><p>This website describes our services and published portfolio. Illustrative product concepts are identified separately from published projects. External websites are operated by their respective providers.</p><h2>Project enquiries</h2><p>Sending an enquiry starts a discussion. Project deliverables, integrations, third-party costs, timeline and support are defined in an individual proposal agreed with you.</p><h2>Privacy and contact</h2><p>See our <a href="/privacy">privacy policy</a> for enquiry handling and optional analytics choices. For questions about this website, <a href="/contact">contact us</a>.</p>`;
   return pageShell(page, [["Home", "/"], [pathname.slice(1), pathname]], `<article class="wrap seo-intro seo-legal">${content}</article>`);
 }
@@ -391,14 +405,18 @@ export async function renderInformation(pathname: string) {
 export async function renderResource(pathname: string) {
   const page = publicPages.find((item) => item.path === pathname);
   if (!page) return undefined;
-  const guide = insights.find((item) => pathname === `/insights/${item.slug}`);
-  const cards = insights.map((item) => `<article class="seo-card"><h2><a href="/insights/${item.slug}">${escapeHtml(item.h1)}</a></h2><p>${escapeHtml(item.intro)}</p></article>`).join("");
+  const guide = insights.find((item) => pathname === `/blog/${item.slug}`);
+  if (guide || pathname === "/blog") {
+    const crumbs: [string, string][] = [["Home", "/"], ["Blog", "/blog"]];
+    if (guide) crumbs.push([guide.h1, pathname]);
+    return pageShell(page, crumbs, guide
+      ? renderEditorialArticle(guide, insights, SITE_ORIGIN)
+      : renderEditorialIndex(insights) + contactBand());
+  }
   const content = pathname === "/faq"
     ? `<section class="wrap seo-intro"><p class="mono">Project questions / Practical answers</p><h1>Before we build.<span>Your questions, answered.</span></h1><p>Explore scope, technology choices, estimates and international collaboration. Project-specific commitments are confirmed in your proposal.</p></section><div class="wrap seo-content"><div class="faq-search" hidden><label for="faq-query">Search questions and answers</label><input id="faq-query" type="search" autocomplete="off" placeholder="Try payments, timeline or source code"><p id="faq-results" role="status" aria-live="polite"></p></div><nav class="faq-categories" aria-label="FAQ categories">${[...new Set(faqs.map((item) => item.category))].map((category, i) => `<a href="#category-${i}">${escapeHtml(category)}</a>`).join("")}</nav>${[...new Set(faqs.map((item) => item.category))].map((category, i) => `<section data-faq-category id="category-${i}"><h2>${escapeHtml(category)}</h2><div class="fq">${faqs.filter((item) => item.category === category).map((item) => `<details id="${item.id}" data-faq><summary>${escapeHtml(item.question)}<span class="pl" aria-hidden="true">+</span></summary><p>${escapeHtml(item.answer)} <a href="${item.path}">${escapeHtml(item.link)}</a>.</p></details>`).join("")}</div></section>`).join("")}</div><script defer src="/reference/faq.js"></script>`
     : pathname === "/global-services"
-      ? `<section class="wrap seo-intro"><p class="mono">New Delhi / Working worldwide</p><h1>International projects.<span>A clear way to work together.</span></h1><p>Custom websites, mobile apps, business software and automation for startups and growing businesses. Based in New Delhi, India, we welcome remote enquiries from the United States, United Kingdom, Canada, UAE including Dubai, and worldwide.</p><a class="btn" href="/#contact">Discuss your project</a></section><section class="wrap seo-content seo-detail"><div><h2>Start with the business workflow</h2><p>Share the audience, the task they need to complete and the systems already in place. Separate essential launch features from later ideas. We review the requirements before agreeing deliverables, dependencies and a schedule.</p><h2>Plan reviews across time zones</h2><p>Tell us your country and time zone when enquiring. Meeting overlap, communication channels, decision makers and feedback milestones are agreed for the engagement. Consolidated written feedback helps keep asynchronous work clear.</p><h2>Design for the market you serve</h2><p>A US or Canadian launch may need regional date formats, multiple time zones and suitable payment options. UK projects may need their own content and billing conventions. UAE projects may involve AED pricing or a separately scoped Arabic interface. India-focused products may need INR and local payment workflows. These are discovery questions, not default features or claims of regulatory compliance.</p><p>Currency, payment provider availability, invoicing, privacy requirements and data hosting constraints depend on your business and customers. Your team approves business rules and obtains any specialist advice needed; technical requirements are agreed before implementation.</p><h2>Make launch responsibilities explicit</h2><p>Define who provides content, approves designs, owns domains and provider accounts, tests the workflow and maintains the system. Confirm source-code terms, third-party fees and support scope in the proposal. We do not list overseas offices or promise round-the-clock availability.</p></div><aside class="seo-card"><h2>A useful first message</h2><ul><li>Your business and intended users</li><li>Country, time zone and review availability</li><li>Core workflow and essential features</li><li>Existing website or system integrations</li><li>Target launch date and constraints</li><li>Optional budget range</li></ul><a href="/insights/website-project-brief">Prepare your brief</a><p><a href="/pricing">How project estimates work</a></p></aside></section><section class="wrap seo-content"><h2>Choose a starting point</h2>${serviceCards(services.slice(0, 5))}<p><a href="/faq#international">International project FAQs</a> · <a href="/about">Meet the studio</a> · <a href="/work">Published projects</a></p></section>`
-      : guide
-        ? `<article class="wrap seo-intro seo-legal"><p class="mono">Planning guide / <time datetime="${RESOURCE_DATE}">${RESOURCE_DATE}</time></p><h1>${escapeHtml(guide.h1)}</h1><p>${escapeHtml(guide.intro)}</p>${guide.sections.map(([heading, text]) => `<section><h2>${escapeHtml(heading)}</h2><p>${escapeHtml(text)}</p></section>`).join("")}<h2>Plan your next step</h2><p><a href="/services/${guide.service}">Explore the related development service</a>, <a href="/faq">read project FAQs</a> or <a href="/contact">discuss your requirements</a>.</p><p><a href="/insights">All planning guides</a> · <a href="/insights/${insights.find((item) => item.slug !== guide.slug)!.slug}">Read the related guide</a></p></article>`
-        : `<section class="wrap seo-intro"><p class="mono">Resources / Better project decisions</p><h1>Plan before you build.</h1><p>Practical guides for founders and teams preparing a website or business software project. Start with your workflow, compare options and bring clear questions to discovery.</p></section><section class="wrap seo-content">${cards}<p><a href="/faq">Browse project questions</a> · <a href="/services">Explore services</a></p></section>`;
-  return pageShell(page, [["Home", "/"], ...(guide ? [["Insights", "/insights"] as [string, string]] : []), [guide ? guide.h1 : pathname === "/faq" ? "FAQ" : pathname === "/global-services" ? "Working internationally" : "Insights", pathname]], content + contactBand());
+      ? `<section class="wrap seo-intro"><p class="mono">New Delhi / Working worldwide</p><h1>International projects.<span>A clear way to work together.</span></h1><p>Custom websites, mobile apps, business software and automation for startups and growing businesses. Based in New Delhi, India, we welcome remote enquiries from the United States, United Kingdom, Canada, UAE including Dubai, and worldwide.</p><a class="btn" href="/#contact">Discuss your project</a></section><section class="wrap seo-content seo-detail"><div><h2>Start with the business workflow</h2><p>Share the audience, the task they need to complete and the systems already in place. Separate essential launch features from later ideas. We review the requirements before agreeing deliverables, dependencies and a schedule.</p><h2>Plan reviews across time zones</h2><p>Tell us your country and time zone when enquiring. Meeting overlap, communication channels, decision makers and feedback milestones are agreed for the engagement. Consolidated written feedback helps keep asynchronous work clear.</p><h2>Design for the market you serve</h2><p>A US or Canadian launch may need regional date formats, multiple time zones and suitable payment options. UK projects may need their own content and billing conventions. UAE projects may involve AED pricing or a separately scoped Arabic interface. India-focused products may need INR and local payment workflows. These are discovery questions, not default features or claims of regulatory compliance.</p><p>Currency, payment provider availability, invoicing, privacy requirements and data hosting constraints depend on your business and customers. Your team approves business rules and obtains any specialist advice needed; technical requirements are agreed before implementation.</p><h2>Make launch responsibilities explicit</h2><p>Define who provides content, approves designs, owns domains and provider accounts, tests the workflow and maintains the system. Confirm source-code terms, third-party fees and support scope in the proposal. We do not list overseas offices or promise round-the-clock availability.</p></div><aside class="seo-card"><h2>A useful first message</h2><ul><li>Your business and intended users</li><li>Country, time zone and review availability</li><li>Core workflow and essential features</li><li>Existing website or system integrations</li><li>Target launch date and constraints</li><li>Optional budget range</li></ul><a href="/blog/website-project-brief">Prepare your brief</a><p><a href="/pricing">How project estimates work</a></p></aside></section><section class="wrap seo-content"><h2>Choose a starting point</h2>${serviceCards(services.slice(0, 5))}<p><a href="/faq#international">International project FAQs</a> · <a href="/about">Meet the studio</a> · <a href="/work">Published projects</a></p></section>`
+      : "";
+  return pageShell(page, [["Home", "/"], [pathname === "/faq" ? "FAQ" : "Working internationally", pathname]], content + contactBand());
 }
