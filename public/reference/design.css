@@ -172,8 +172,9 @@ main,footer{position:relative;z-index:1}
 .eb{color:var(--red2);margin-bottom:1.3rem}.h2s{color:var(--mu);font-size:1.1rem;margin-top:1.5rem;animation-delay:.95s}
 .dark{background:linear-gradient(180deg,rgba(28,30,34,.78),rgba(23,24,27,.86))}
 .mid{background:linear-gradient(180deg,rgba(41,44,49,.8),rgba(36,39,43,.88))}
-.lt{background:rgba(240,240,238,.9)}.lt2{background:rgba(221,224,227,.9)}
-.cl{background:rgba(240,240,238,.92)}.cr{background:rgba(20,21,24,.86)}footer{background:rgba(20,21,24,.94)}
+/* Warm beige panels keep the black/red sculpture visible beneath the content. */
+.lt{background:rgba(220,211,195,.82)}.lt2{background:rgba(210,201,185,.82)}
+.cl{background:rgba(220,211,195,.84)}.cr{background:rgba(20,21,24,.86)}footer{background:rgba(20,21,24,.94)}
 .hud b{display:block}.hud .mono b{display:inline}
 body.nogl::before{content:"";position:fixed;inset:0;z-index:0;background:radial-gradient(40% 45% at 72% 42%,rgba(229,43,74,.16),transparent)}
 @media(min-width:861px){.links{gap:1.4rem}}
