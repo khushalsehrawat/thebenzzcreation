@@ -1,3 +1,4 @@
+import { planningFaqs } from "./answer-content";
 import { resourcePages } from "./resources";
 import { site } from "../src/lib/site";
 export const SITE_ORIGIN = site.url;
@@ -458,6 +459,8 @@ export const projects = [
       "A gentle visual language introduces the service and supports a clear enquiry path. This is a design and development example, not an endorsement of the practitioner's credentials or any health claims on the linked website.",
   },
 ];
+
+for (const service of services) service.faq.push(...planningFaqs(service.name));
 
 export const homepageFaqs: [string, string][] = [
   [

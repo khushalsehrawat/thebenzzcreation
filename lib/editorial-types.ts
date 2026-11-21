@@ -1,5 +1,8 @@
 export type EditorialArticle = {
   slug: string;
+  tags?: string[];
+  author?: string;
+  steps?: { name: string; text: string }[];
   key: string;
   title: string;
   description: string;

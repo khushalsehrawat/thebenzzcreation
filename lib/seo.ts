@@ -1,3 +1,6 @@
+import { entityContent } from "./entity-content";
+import { homeAnswer, serviceAnswers } from "./answer-content";
+import { jsonLdMarkup } from "../src/components/JsonLd";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { BRAND_DESCRIPTION, faqs, insights } from "./resources";
@@ -65,6 +68,9 @@ export function schemaFor(
       height: 512,
     },
     address: BUSINESS.address,
+    image: `${SITE_ORIGIN}/social/home.jpg`,
+    knowsAbout: services.map(item => item.name),
+    ...(BUSINESS.founder ? { founder: { "@type": "Person", name: BUSINESS.founder.name, jobTitle: BUSINESS.founder.role } } : {}),
     areaServed: [
       { "@type": "Place", name: "Worldwide" },
       ...PRIMARY_MARKETS.map((name) => ({ "@type": "Country", name })),
@@ -84,21 +90,22 @@ export function schemaFor(
     "@context": "https://schema.org",
     "@graph": [
       organization,
+      { ...organization, "@type": "ProfessionalService", "@id": `${SITE_ORIGIN}/#professional-service`, parentOrganization: { "@id": organizationId } },
       {
         "@type": "WebSite",
         "@id": websiteId,
         url: `${SITE_ORIGIN}/`,
         name: BUSINESS.name,
         publisher: { "@id": organizationId },
-        inLanguage: "en",
+        inLanguage: "en-IN",
       },
       {
-        "@type": "WebPage",
+        "@type": page.path === "/about" ? "AboutPage" : page.path === "/contact" ? "ContactPage" : "WebPage",
         "@id": `${url}#webpage`,
         url,
         name: page.title,
         description: page.description,
-        inLanguage: "en",
+        inLanguage: "en-IN",
         isPartOf: { "@id": websiteId },
         about: { "@id": service ? `${url}#service` : organizationId },
         breadcrumb: { "@id": `${url}#breadcrumb` },
@@ -130,7 +137,7 @@ export function schemaFor(
         mainEntityOfPage: { "@id": `${url}#webpage` }, publisher: { "@id": organizationId },
         author: { "@id": organizationId },
         ...(item.sources.length ? { citation: item.sources.map(({ label, url: sourceUrl }) => ({ "@type": "CreativeWork", name: label, url: sourceUrl })) } : {}),
-        image: `${SITE_ORIGIN}/social/${page.key}.jpg`, inLanguage: "en",
+        image: `${SITE_ORIGIN}/social/${page.key}.jpg`, inLanguage: "en-IN",
         articleSection: item.category, isPartOf: { "@id": `${SITE_ORIGIN}/blog#blog` },
         ...(item.faqs.length ? { hasPart: { "@id": `${url}#faq` } } : {}),
       })),
@@ -146,6 +153,17 @@ export function schemaFor(
           "@type": "Question", name: question,
           acceptedAnswer: { "@type": "Answer", text: answer },
         })),
+      })),
+      ...((service || ["/", "/faq"].includes(page.path)) ? [{
+        "@type": "FAQPage", "@id": `${url}#faq`,
+        mainEntity: (service ? service.faq : page.path === "/" ? homepageFaqs : faqs.map(item => [item.question, `${item.answer} ${item.link}.`])).map(([question, answer]) => ({
+          "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer },
+        })),
+      }] : []),
+      ...projects.filter(item => page.path === `/work/${item.slug}`).map(item => ({
+        "@type": "CreativeWork", "@id": `${url}#work`, name: item.name, description: item.summary,
+        url, image: `${SITE_ORIGIN}/images/${item.image}-1440.webp`, creator: { "@id": organizationId },
+        mainEntityOfPage: { "@id": `${url}#webpage` },
       })),
       ...(page.path === "/services"
         ? [
@@ -191,7 +209,7 @@ ${homepage ? '<link rel="alternate" type="text/markdown" href="/index.md">' : ""
 <script>document.documentElement.classList.replace('no-js','js')</script>
 <link rel="stylesheet" href="/reference/fonts.css"><link rel="stylesheet" href="/reference/design.css"><link rel="stylesheet" href="/reference/alignment.css"><link rel="stylesheet" href="/reference/seo.css">
 ${page.path.startsWith("/blog") ? '<link rel="stylesheet" href="/reference/editorial.css">' : ""}
-<script type="application/ld+json">${safeJson(schemaFor(page, breadcrumb, service))}</script>
+${jsonLdMarkup(schemaFor(page, breadcrumb, service))}
 <script type="application/json" id="site-analytics-config">${safeJson(analyticsConfig())}</script><script defer src="/reference/analytics.js"></script>
 ${homepage ? '<script defer src="/reference/background-loader.js"></script>' : ""}`;
 }
@@ -260,9 +278,16 @@ export async function renderHome() {
     /<script src="(\/reference\/[^\"]+\.js)"><\/script>/g,
     '<script defer src="$1"></script>',
   );
+  html = html.replace(/(<main\b[^>]*>)/, `$1${quickAnswer(homeAnswer)}`).replace('</main>', `${revisionNote()}</main>`);
   return html;
 }
 
+function revisionNote() {
+  return `<p class="wrap seo-revision">By <a href="/about">TheBenzzCreations</a> ? Last updated <time datetime="${CONTENT_UPDATED}">${CONTENT_UPDATED}</time></p>`;
+}
+function quickAnswer(answer: string) {
+  return `<section class="wrap seo-content quick-answer" aria-label="Quick answer"><h2>Quick answer</h2><p>${escapeHtml(answer)}</p></section>`;
+}
 function breadcrumbs(items: [string, string][]) {
   return `<nav class="seo-breadcrumbs" aria-label="Breadcrumb"><ol>${items.map(([name, href], index) => `<li>${index === items.length - 1 ? `<span aria-current="page">${escapeHtml(name)}</span>` : `<a href="${href}">${escapeHtml(name)}</a>`}</li>`).join("")}</ol></nav>`;
 }
@@ -283,9 +308,9 @@ export async function pageShell(
       .match(/<footer[\s\S]*?<\/footer>/)?.[0]
       .replace(/href="#/g, 'href="/#')
       .replace("</footer>", `${seoFooter()}</footer>`) || "";
-  const guides = service ? insights.filter((item) => item.service === service.slug) : [];
+  const guides = service ? insights.filter((item) => item.service === service.slug || (item.tags || []).includes(service.slug)).concat(insights.filter(item => item.service !== service.slug).slice(0, 3)).filter((item, index, all) => all.findIndex(other => other.slug === item.slug) === index).slice(0, 6) : [];
   const reading = guides.length ? `<section class="wrap seo-content"><h2>Plan before you build</h2><div class="seo-service-grid">${guides.map((item) => `<article class="seo-card"><h3><a href="/blog/${item.slug}">${escapeHtml(item.h1)}</a></h3><p>${escapeHtml(item.description)}</p></article>`).join("")}</div></section>` : "";
-  return `<!DOCTYPE html><html lang="en-IN" class="no-js"><head>${renderHead(page, crumbs, service)}</head><body id="top" class="seo-page"><a class="skip" href="#main">Skip to content</a>${header}<main id="main" tabindex="-1"><div class="wrap">${breadcrumbs(crumbs)}</div>${content}${reading}</main>${footer}<script defer src="/reference/navigation.js"></script></body></html>`;
+  return `<!DOCTYPE html><html lang="en-IN" class="no-js"><head>${renderHead(page, crumbs, service)}</head><body id="top" class="seo-page"><a class="skip" href="#main">Skip to content</a>${header}<main id="main" tabindex="-1"><div class="wrap">${breadcrumbs(crumbs)}</div>${service ? quickAnswer(serviceAnswers[service.slug]) : ""}${content}${entityContent(page.path)}${reading}${revisionNote()}</main>${footer}<script defer src="/reference/navigation.js"></script></body></html>`;
 }
 
 function serviceCards(items: Service[]) {
@@ -342,7 +367,7 @@ export async function renderService(slug: string) {
       ["Services", "/services"],
       [service.name, page.path],
     ],
-    `<section class="wrap seo-intro"><p class="mono">${escapeHtml(service.eyebrow)}</p><h1>${escapeHtml(service.name)}<span>Built around your business.</span></h1><p>${escapeHtml(service.intro)}</p><a class="btn" href="/?service=${service.enquiry}#contact">Discuss ${escapeHtml(service.name.toLowerCase())}</a></section><section class="wrap seo-content seo-detail"><div><h2>What we can build.</h2>${service.paragraphs.map((text) => `<p>${escapeHtml(text)}</p>`).join("")}<p><a href="/global-services">Plan international collaboration</a> or <a href="/faq">browse project FAQs</a>.</p><h2>Is this the right fit?</h2><p>${escapeHtml(service.fit)}</p></div><aside class="seo-card"><h2>What the scope can include</h2><ul>${service.deliverables.map((text) => `<li>${escapeHtml(text)}</li>`).join("")}</ul><p>Deliverables, integrations, third-party costs, timeline and support are defined in your proposal.</p><a class="seo-text-link" href="/#process">How our process works ↗</a></aside></section><section class="wrap seo-content"><h2 class="seo-section-title">Questions about ${escapeHtml(service.name.toLowerCase())}.</h2><div class="fq">${service.faq.map(([question, answer]) => `<details><summary>${escapeHtml(question)}<span class="pl" aria-hidden="true">+</span></summary><p>${escapeHtml(answer)}</p></details>`).join("")}</div></section>${actualProjects.length ? `<section class="wrap seo-content"><h2 class="seo-section-title">Related published projects.</h2>${projectCards(actualProjects)}</section>` : `<section class="wrap seo-content seo-note"><h2>Explore the studio's work.</h2><p>Our published portfolio currently contains website and interface projects. Product concepts on the homepage illustrate possibilities and are not additional client projects.</p><a class="seo-text-link" href="/work">View the published portfolio ↗</a></section>`}<section class="wrap seo-content"><h2 class="seo-section-title">Services that connect.</h2>${serviceCards(services.filter((item) => service.related.includes(item.slug)))}</section>${contactBand(service)}`,
+    `<section class="wrap seo-intro"><p class="mono">${escapeHtml(service.eyebrow)}</p><h1>${escapeHtml(service.name)}<span>Built around your business.</span></h1><p>${escapeHtml(service.intro)}</p><a class="btn" href="/?service=${service.enquiry}#contact">Discuss ${escapeHtml(service.name.toLowerCase())}</a></section><section class="wrap seo-content seo-detail"><div><h2>What we can build.</h2>${service.paragraphs.map((text) => `<p>${escapeHtml(text)}</p>`).join("")}<p><a href="/global-services">Plan international collaboration</a> or <a href="/faq">browse project FAQs</a>.</p><h2>Is this the right fit?</h2><p>${escapeHtml(service.fit)}</p></div><aside class="seo-card"><h2>What the scope can include</h2><ul>${service.deliverables.map((text) => `<li>${escapeHtml(text)}</li>`).join("")}</ul><p>Deliverables, integrations, third-party costs, timeline and support are defined in your proposal.</p><a class="seo-text-link" href="/#process">How our process works ↗</a></aside></section><section class="wrap seo-content"><h2 class="seo-section-title">Questions about ${escapeHtml(service.name.toLowerCase())}.</h2><div class="fq">${service.faq.map(([question, answer]) => `<details><summary>${escapeHtml(question)}<span class="pl" aria-hidden="true">+</span></summary><p>${escapeHtml(answer)}</p></details>`).join("")}</div></section>${actualProjects.length ? `<section class="wrap seo-content"><h2 class="seo-section-title">Related published projects.</h2>${projectCards(actualProjects)}</section>` : `<section class="wrap seo-content seo-note"><h2>Explore the studio's work.</h2><p>Our published portfolio currently contains website and interface projects. Product concepts on the homepage illustrate possibilities and are not additional client projects.</p><a class="seo-text-link" href="/work/nsar-workshop">Explore the NSAR Workshop website example</a><p>This example shows website work, rather than evidence of a delivered mobile or AI product.</p><a class="seo-text-link" href="/work">View the published portfolio ↗</a></section>`}<section class="wrap seo-content"><h2 class="seo-section-title">Services that connect.</h2>${serviceCards(services.filter((item) => service.related.includes(item.slug)))}</section>${contactBand(service)}`,
     service,
   );
 }
@@ -370,7 +395,7 @@ export async function renderProject(slug: string) {
       ["Work", "/work"],
       [project.name, page.path],
     ],
-    `<section class="wrap seo-intro"><p class="mono">Published website / Interface project</p><h1>${escapeHtml(project.name)}<span>A purpose-built digital experience.</span></h1><p>${escapeHtml(project.summary)}</p><a class="btn" href="${project.external}" target="_blank" rel="noopener noreferrer">Visit the published website ↗</a></section><figure class="wrap seo-project-image">${projectImage(project, true)}<figcaption>Preview from the studio's existing published portfolio.</figcaption></figure><section class="wrap seo-content seo-detail"><div><h2>The challenge.</h2><p>${escapeHtml(project.challenge)}</p><h2>The approach.</h2><p>${escapeHtml(project.approach)}</p></div><aside class="seo-card"><h2>Related services</h2><ul>${project.services
+    `<section class="wrap seo-intro"><p class="mono">Published website / Interface project</p><h1>${escapeHtml(project.name)}<span>A purpose-built digital experience.</span></h1><p>${escapeHtml(project.summary)}</p><a class="btn" href="${project.external}" target="_blank" rel="noopener noreferrer">Visit the published website ↗</a></section><figure class="wrap seo-project-image">${projectImage(project, true)}<figcaption>Preview from the studio's existing published portfolio.</figcaption></figure><section class="wrap seo-content seo-detail"><div><h2>The challenge.</h2><p>${escapeHtml(project.challenge)}</p><h2>The approach.</h2><p>${escapeHtml(project.approach)}</p><h2>Published outcome</h2><p>The linked interface and screenshot show the published work. No independently measured conversion, revenue or usage outcomes are available on this page.</p><h2>Stack and project timeline</h2><p>Implementation stack, commissioning status and delivery dates have not been confirmed for public attribution. Contact the studio to discuss relevant implementation requirements for your own project.</p></div><aside class="seo-card"><h2>Related services</h2><ul>${project.services
       .map((slug) => {
         const item = services.find((service) => service.slug === slug)!;
         return `<li><a href="/services/${item.slug}">${escapeHtml(item.name)}</a></li>`;
@@ -389,7 +414,7 @@ export async function renderPrivacy() {
       ["Home", "/"],
       ["Privacy", "/privacy"],
     ],
-    `<section class="wrap seo-intro"><p class="mono">Your information / Your choices</p><h1>Your privacy.<span>Your choices.</span></h1><p>Updated ${CONTENT_UPDATED}. This policy explains enquiry handling and your analytics choices when you visit the site or contact TheBenzzCreations.</p></section><div class="wrap privacy-layout"><aside class="privacy-sidebar"><nav aria-label="Privacy policy contents"><p class="mono">On this page</p><ol><li><a href="#privacy-enquiries">Your project enquiry</a></li><li><a href="#privacy-storage">Delivery and storage</a></li><li><a href="#privacy-analytics">Optional Google Analytics</a></li><li><a href="#privacy-hosting">Local assets and hosting</a></li><li><a href="#privacy-contact">Your choices and contact</a></li></ol></nav><div class="privacy-contact"><p class="mono">Questions about your data?</p><p>Get in touch with the studio.</p><a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a></div></aside><article class="seo-content seo-legal privacy-policy" aria-label="Privacy policy"><section id="privacy-enquiries" aria-labelledby="privacy-heading-enquiries"><p class="mono privacy-number">01</p><h2 id="privacy-heading-enquiries">Your project enquiry</h2><p>We use your name, email, chosen service and project description to respond to your enquiry. Phone, business, budget and timeline are optional. Please avoid sharing sensitive personal information.</p></section><section id="privacy-storage" aria-labelledby="privacy-heading-storage"><p class="mono privacy-number">02</p><h2 id="privacy-heading-storage">Delivery and storage</h2><p>Enquiries are validated by this website and delivered through Web3Forms or a configured email provider. The details you submit are shared with that provider for delivery and may remain in the studio's inbox while handling your enquiry or project. This site does not maintain a separate enquiry database.</p></section><section id="privacy-analytics" aria-labelledby="privacy-heading-analytics"><p class="mono privacy-number">03</p><h2 id="privacy-heading-analytics">Optional Google Analytics</h2><p>If Google Analytics 4 is configured, it is blocked until you choose to allow analytics. Choosing &ldquo;Decline&rdquo; keeps it disabled. Advertising storage, advertising user data and personalised advertising remain denied. Your preference is stored locally so the site can remember it.</p><p>After consent, analytics can measure page views and confirmed enquiry submissions. Lead events contain a service category and form identifier; they do not include your name, email, phone or message. Page URLs sent by this implementation omit query strings and fragments. Google may process device, browser and usage information under its own policies.</p><p>You can review or withdraw your choice through <button type="button" class="inline-button" data-analytics-settings>Analytics settings</button>. Withdrawing stops subsequent site analytics events and removes accessible first-party Google Analytics cookies. Existing data already sent to Google is not removed by changing this preference.</p></section><section id="privacy-hosting" aria-labelledby="privacy-heading-hosting"><p class="mono privacy-number">04</p><h2 id="privacy-heading-hosting">Local assets and hosting</h2><p>Fonts, images and animation libraries are served locally. Hosting infrastructure may process ordinary request logs to deliver and protect the site. Third-party project links and direct email or WhatsApp links follow their respective providers' privacy practices.</p></section><section id="privacy-contact" aria-labelledby="privacy-heading-contact"><p class="mono privacy-number">05</p><h2 id="privacy-heading-contact">Your choices and contact</h2><p>You can ask about or request deletion of information you supplied by contacting <a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a>. You can also contact the studio directly instead of using the enquiry form.</p></section></article></div>`,
+    `<section class="wrap seo-intro"><p class="mono">Your information / Your choices</p><h1>Your privacy.<span>Your choices.</span></h1><p>Updated ${CONTENT_UPDATED}. This policy explains enquiry handling and your analytics choices when you visit the site or contact TheBenzzCreations.</p></section><div class="wrap privacy-layout"><aside class="privacy-sidebar"><nav aria-label="Privacy policy contents"><p class="mono">On this page</p><ol><li><a href="#privacy-enquiries">Your project enquiry</a></li><li><a href="#privacy-storage">Delivery and storage</a></li><li><a href="#privacy-analytics">Optional Google Analytics</a></li><li><a href="#privacy-hosting">Local assets and hosting</a></li><li><a href="#privacy-contact">Your choices and contact</a></li></ol></nav><div class="privacy-contact"><p class="mono">Questions about your data?</p><p>Get in touch with the studio.</p><a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a></div></aside><article class="seo-content seo-legal privacy-policy" aria-label="Privacy policy"><section id="privacy-enquiries" aria-labelledby="privacy-heading-enquiries"><p class="mono privacy-number">01</p><h2 id="privacy-heading-enquiries">Your project enquiry</h2><p>We use your name, email, chosen service and project description to respond to your enquiry. Phone, business, budget and timeline are optional. Please avoid sharing sensitive personal information.</p></section><section id="privacy-storage" aria-labelledby="privacy-heading-storage"><p class="mono privacy-number">02</p><h2 id="privacy-heading-storage">Delivery and storage</h2><p>Enquiries are validated by this website and delivered through Web3Forms or a configured email provider. The details you submit are shared with that provider for delivery and may remain in the studio's inbox while handling your enquiry or project. This site does not maintain a separate enquiry database.</p></section><section id="privacy-analytics" aria-labelledby="privacy-heading-analytics"><p class="mono privacy-number">03</p><h2 id="privacy-heading-analytics">Optional Google Analytics</h2><p>If Google Analytics 4 is configured, it is blocked until you choose to allow analytics. Choosing &ldquo;Decline&rdquo; keeps it disabled. Advertising storage, advertising user data and personalised advertising remain denied. Your preference is stored locally so the site can remember it.</p><p>After consent, analytics can measure page views, confirmed enquiry submissions and contact or project CTA clicks. Lead events contain a service category and form identifier; they do not include your name, email, phone or message. Page URLs sent by this implementation omit query strings and fragments. Google may process device, browser and usage information under its own policies.</p><p>You can review or withdraw your choice through <button type="button" class="inline-button" data-analytics-settings>Analytics settings</button>. Withdrawing stops subsequent site analytics events and removes accessible first-party Google Analytics cookies. Existing data already sent to Google is not removed by changing this preference.</p></section><section id="privacy-hosting" aria-labelledby="privacy-heading-hosting"><p class="mono privacy-number">04</p><h2 id="privacy-heading-hosting">Local assets and hosting</h2><p>Fonts, images and animation libraries are served locally. Hosting infrastructure may process ordinary request logs to deliver and protect the site. Third-party project links and direct email or WhatsApp links follow their respective providers' privacy practices.</p></section><section id="privacy-contact" aria-labelledby="privacy-heading-contact"><p class="mono privacy-number">05</p><h2 id="privacy-heading-contact">Your choices and contact</h2><p>You can ask about or request deletion of information you supplied by contacting <a href="mailto:${BUSINESS.email}">${BUSINESS.email}</a>. You can also contact the studio directly instead of using the enquiry form.</p></section></article></div>`,
   );
 }
 
