@@ -1,6 +1,7 @@
+import { readFile } from "node:fs/promises";
+import sitemapEntries from "../app/sitemap";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 import { GET as home } from "../app/route";
 import { POST as mcp } from "../app/mcp/route";
@@ -26,8 +27,8 @@ test("homepage negotiates Markdown without poisoning the HTML cache", async () =
 });
 
 test("discovery and schema cover every public page and verified contact details", async () => {
-  assert.equal(robots().rules && (robots().rules as { other: Record<string, string> }).other["Content-Signal"], "search=yes, ai-train=no");
-  const sitemap = await readFile(new URL("../app/sitemap.xml", import.meta.url), "utf8");
+  assert.ok(Array.isArray(robots().rules) && JSON.stringify(robots().rules).includes("OAI-SearchBot"));
+  const sitemap = sitemapEntries().map(item => `<loc>${item.url}</loc>`).join("");
   for (const page of publicPages) assert.ok(sitemap.includes(`<loc>${SITE_ORIGIN}${page.path}</loc>`));
   for (const page of publicPages) assert.ok(llmsText().includes(page.path));
   const organization = schemaFor(publicPages[0], [["Home", "/"]])["@graph"][0];

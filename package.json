@@ -12,10 +12,19 @@
     "test:browser": "node scripts/browser-check.mjs",
     "assets:seo": "tsx scripts/generate-seo-assets.tsx",
     "sitemap:sync": "tsx scripts/sync-blog-sitemap.ts",
-    "prebuild": "npm run assets:seo",
+    "prebuild": "npm run content:check && npm run assets:seo && npm run discovery:generate && npm run schema:check && npm run seo:check",
     "predev": "npm run assets:seo",
     "test:seo": "tsx scripts/seo-check.mjs",
-    "test:blog": "tsx scripts/blog-check.ts"
+    "test:blog": "tsx scripts/blog-check.ts",
+    "content:check": "tsx scripts/content-check.ts",
+    "discovery:generate": "tsx scripts/generate-discovery.ts",
+    "schema:check": "tsx scripts/validate-schema.ts",
+    "seo:check": "tsx scripts/seo-audit.ts",
+    "seo:check:built": "tsx scripts/seo-audit.ts --built",
+    "postbuild": "npm run seo:check:built",
+    "indexnow:ping": "tsx scripts/indexnow.ts",
+    "lighthouse": "npx --yes --package=@lhci/cli@0.15.1 lhci autorun",
+    "test:seo:browser": "node scripts/seo-browser.mjs"
   },
   "dependencies": {
     "next": "16.4.5",

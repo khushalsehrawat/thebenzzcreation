@@ -1,3 +1,4 @@
+import { archivesFor } from "../lib/blog-archives";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { insights } from "../lib/resources";
@@ -20,7 +21,7 @@ import {
 } from "../lib/seo";
 
 test("canonical registry contains unique real public pages and metadata", () => {
-  assert.equal(publicPages.length, 21 + insights.length);
+  assert.equal(publicPages.length, 21 + insights.length + archivesFor(insights).length);
   for (const key of ["path", "title", "description"] as const)
     assert.equal(
       new Set(publicPages.map((page) => page[key])).size,
@@ -125,13 +126,13 @@ test("structured data describes the actual business and avoids fabricated review
   );
 });
 
-test("analytics configuration accepts the real ID, explicit disable and valid overrides", () => {
+test("analytics configuration defaults off and accepts explicit valid overrides", () => {
   const oldPublic = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
     oldServer = process.env.GA4_MEASUREMENT_ID;
   try {
     delete process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
     delete process.env.GA4_MEASUREMENT_ID;
-    assert.equal(analyticsConfig().measurementId, "G-Q9JRF078F9");
+    assert.equal(analyticsConfig().measurementId, "");
     process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID = "";
     assert.equal(analyticsConfig().measurementId, "");
     process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID = "G-TEST12345";

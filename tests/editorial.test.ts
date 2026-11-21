@@ -1,6 +1,8 @@
+import { archivesFor, PAGE_SIZE } from "../lib/blog-archives";
+import { renderBlogArchive } from "../lib/seo";
+import sitemapEntries from "../app/sitemap";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFile } from "node:fs/promises";
 import { insights } from "../lib/resources";
 import { flagshipArticles } from "../lib/editorial";
 import { buyingGuides } from "../lib/editorial-buying-guides";
@@ -10,11 +12,11 @@ import { renderResource, renderService } from "../lib/seo";
 
 test("six distinct flagship guides preserve existing slugs and have resolvable topic links", async () => {
   assert.equal(flagshipArticles.length, 6);
-  assert.equal(insights.length, flagshipArticles.length + buyingGuides.length + 2);
+  assert.equal(insights.length, flagshipArticles.length + buyingGuides.length + 10);
   for (const slug of ["website-project-brief", "custom-software-vs-off-the-shelf"]) {
     assert.ok(insights.some((item) => item.slug === slug));
   }
-  const sitemap = await readFile(new URL("../app/sitemap.xml", import.meta.url), "utf8");
+  const sitemap = sitemapEntries().map(item => `<loc>${item.url}</loc>`).join("");
   for (const article of insights) {
     assert.ok(sitemap.includes(`<loc>${SITE_ORIGIN}/blog/${article.slug}</loc>`));
     assert.equal(readingMinutes(article), Math.ceil(articleText(article).trim().split(/\s+/).length / 220));
@@ -50,7 +52,7 @@ test("article HTML, schema, FAQ answers and navigation agree", async () => {
     for (const match of html.matchAll(/<a\b[^>]*href="(#[^"]+|\/[^"?]*)"/g)) {
       const target = new URL(match[1], SITE_ORIGIN + `/blog/${article.slug}`);
       if (match[1].startsWith("#")) assert.ok(ids.includes(target.hash.slice(1)), match[1]);
-      else assert.ok(publicPages.some((page) => page.path === target.pathname), match[1]);
+      else assert.ok(target.pathname === "/feed.xml" || publicPages.some((page) => page.path === target.pathname), match[1]);
     }
     assert.match(html, /loading="eager" decoding="async" fetchpriority="high"/);
     assert.match(html, /aria-label="On this page"/);
@@ -60,12 +62,13 @@ test("article HTML, schema, FAQ answers and navigation agree", async () => {
 
 test("hub and services expose the topic cluster without requiring browser JavaScript", async () => {
   const html = (await renderResource("/blog"))!;
+  const cluster = html + (await Promise.all(archivesFor(insights).filter(item => item.kind === "page").map(item => renderBlogArchive(item.path)))).join("");
   for (const article of insights) {
-    assert.ok(html.includes(`href="/blog/${article.slug}"`));
+    assert.ok(cluster.includes(`href="/blog/${article.slug}"`));
     assert.ok((await renderService(article.service))!.includes(`href="/blog/${article.slug}"`));
   }
-  assert.equal((html.match(/data-article /g) || []).length, insights.length);
-  assert.equal((html.match(/aria-label="Read guide: /g) || []).length, insights.length);
+  assert.equal((html.match(/data-article /g) || []).length, PAGE_SIZE);
+  assert.equal((html.match(/aria-label="Read guide: /g) || []).length, PAGE_SIZE);
   assert.match(html, /data-editorial-filters hidden/);
   assert.match(html, /"@type":"Blog"/);
   const automation = flagshipArticles.find((article) => article.slug === "ai-automation-for-small-business")!;

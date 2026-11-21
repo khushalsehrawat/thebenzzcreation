@@ -29,12 +29,11 @@ test("all articles expose matching Markdown answers, citations and canonical sou
   }
 });
 
-test("comparison tables retain column boundaries, links and illustrative budget context", async () => {
-  const response = await GET(new Request(SITE_ORIGIN), { params: Promise.resolve({ slug: "custom-erp-development-cost" }) });
+test("comparison tables preserve columns while unapproved prices stay unpublished", async () => {
+  const response = await GET(new Request(SITE_ORIGIN), { params: Promise.resolve({ slug: "ecommerce-website-india-payment-gateways" }) });
   const markdown = await response.text();
-  assert.ok(markdown.includes("| Workstream | Combined hours | Deliverable |\n| --- | --- | --- |"));
-  assert.ok(markdown.includes("1,200 × USD 50 = USD 60,000"));
-  assert.ok(markdown.includes("not supplier prices, regional averages or currency conversions"));
+  assert.ok(markdown.includes("| Approach | Can suit | Confirm before committing |\n| --- | --- | --- |"));
+  assert.ok(!/USD\s?\d|INR\s?\d/.test(markdown));
   assert.equal(buyingGuides.length, 12);
   assert.equal(new Set(insights.map(({ slug }) => slug)).size, insights.length);
 });

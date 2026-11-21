@@ -10,7 +10,7 @@ async function main() {
     mkdir("public/social", { recursive: true }),
   ]);
   const font = await readFile("public/fonts/space-grotesk-700.ttf");
-  for (const page of publicPages) {
+  for (const page of publicPages.filter((item, index, all) => all.findIndex(other => other.key === item.key) === index)) {
     const title =
       services.find((service) => service.slug === page.key)?.name ||
       projects.find((project) => project.slug === page.key)?.name ||

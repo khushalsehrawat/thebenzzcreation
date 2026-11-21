@@ -7,6 +7,12 @@ export default function NotFound() {
         Let’s get you back.
       </h1>
       <p>This page is unavailable.</p>
+      <nav aria-label="Helpful pages">
+        <a href="/services">Explore services</a>{" · "}
+        <a href="/work">Published projects</a>{" · "}
+        <a href="/blog">Planning guides</a>{" · "}
+        <a href="/contact">Contact the studio</a>
+      </nav>
       <a
         href="/"
         style={{ color: "#ff4864", display: "inline-block", padding: "20px 0" }}

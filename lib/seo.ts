@@ -1,3 +1,5 @@
+import { trustMarkup } from "./trust";
+import { archivesFor, PAGE_SIZE } from "./blog-archives";
 import { entityContent } from "./entity-content";
 import { homeAnswer, serviceAnswers } from "./answer-content";
 import { jsonLdMarkup } from "../src/components/JsonLd";
@@ -141,6 +143,10 @@ export function schemaFor(
         articleSection: item.category, isPartOf: { "@id": `${SITE_ORIGIN}/blog#blog` },
         ...(item.faqs.length ? { hasPart: { "@id": `${url}#faq` } } : {}),
       })),
+      ...insights.filter(item => page.path === `/blog/${item.slug}` && item.steps?.length).map(item => ({
+        "@type": "HowTo", "@id": `${url}#howto`, name: item.h1, description: item.answer,
+        step: item.steps!.map((step, index) => ({ "@type": "HowToStep", position: index + 1, name: step.name, text: step.text })),
+      })),
       ...(page.path === "/blog" ? [{
         "@type": "Blog", "@id": `${SITE_ORIGIN}/blog#blog`,
         url, name: "TheBenzzCreations Blog", description: page.description,
@@ -169,6 +175,7 @@ export function schemaFor(
         ? [
             {
               "@type": "ItemList",
+              "@id": `${url}#service-list`,
               name: "Digital services",
               itemListElement: services.map((item, index) => ({
                 "@type": "ListItem",
@@ -192,12 +199,15 @@ export function renderHead(
   const url = absoluteUrl(page.path),
     image = `${SITE_ORIGIN}/social/${page.key}.jpg`;
   const article = insights.find((item) => page.path === `/blog/${item.slug}`);
+  const project = projects.find(item => page.path === `/work/${item.slug}`);
+  const preload = article ? `<link rel="preload" as="image" href="/social/${article.key}-800.webp" imagesrcset="/social/${article.key}-480.webp 480w, /social/${article.key}-800.webp 800w, /social/${article.key}-1200.webp 1200w" imagesizes="(max-width: 760px) 100vw, 900px" fetchpriority="high">`
+    : project ? `<link rel="preload" as="image" type="image/avif" href="/images/${project.image}-960.avif" imagesrcset="/images/${project.image}-640.avif 640w, /images/${project.image}-960.avif 960w, /images/${project.image}-1440.avif 1440w" imagesizes="(max-width:1400px) 90vw, 1200px" fetchpriority="high">` : "";
   // Preserve the public ownership token already published by the verified live domain.
   const verification =
     process.env.GOOGLE_SITE_VERIFICATION ??
     "8MsySZqeSGdkv-ve9SoSqPVqLD5NZ5vmL2MfO2t8LVI";
   return `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${escapeHtml(page.title)}</title><meta name="description" content="${escapeHtml(page.description)}">
+${preload}<title>${escapeHtml(page.title)}</title><meta name="description" content="${escapeHtml(page.description)}">
 <link rel="canonical" href="${url}"><link rel="alternate" hreflang="x-default" href="${url}"><link rel="alternate" type="application/rss+xml" title="TheBenzzCreations Blog" href="/feed.xml">${insights.some((article) => page.path === `/blog/${article.slug}`) ? `<link rel="alternate" type="text/markdown" href="${url}/index.md">` : ""}<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta property="og:type" content="${article ? "article" : "website"}">${article ? `<meta property="article:published_time" content="${article.published}"><meta property="article:modified_time" content="${article.updated}"><meta property="article:section" content="${escapeHtml(article.category)}">` : ""}<meta property="og:site_name" content="TheBenzzCreations"><meta property="og:locale" content="en_IN"><meta property="og:url" content="${url}"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:image" content="${image}"><meta property="og:image:secure_url" content="${image}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${escapeHtml(page.title)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(page.title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${image}"><meta name="twitter:image:alt" content="${escapeHtml(page.title)}"><meta name="theme-color" content="#141518">
@@ -215,7 +225,7 @@ ${homepage ? '<script defer src="/reference/background-loader.js"></script>' : "
 }
 
 function seoFooter() {
-  return `<div class="wrap seo-footer-links"><nav aria-label="Service information">${services.map((item) => `<a href="/services/${item.slug}">${escapeHtml(item.name)}</a>`).join("")}</nav><div><a href="/services">All services</a><a href="/work">Project details</a><a href="/about">About</a><a href="/contact">Contact</a><a href="/pricing">Pricing</a><a href="/global-services">Working internationally</a><a href="/faq">FAQ</a><a href="/blog">Blog</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><button type="button" class="analytics-settings" data-analytics-settings hidden>Analytics settings</button></div></div>`;
+  return `<div class="wrap seo-footer-links"><nav aria-label="Service information">${services.map((item) => `<a href="/services/${item.slug}">${escapeHtml(item.name)}</a>`).join("")}</nav><div><a href="mailto:${BUSINESS.email}">Email the studio</a><a href="tel:${BUSINESS.telephone}">Call the studio</a><a href="https://wa.me/${BUSINESS.telephone.replace(/\D/g, "")}" target="_blank" rel="noopener noreferrer">Message on WhatsApp</a>${BUSINESS.bookingUrl ? `<a href="${escapeHtml(BUSINESS.bookingUrl)}">Book a project discussion</a>` : ""}<a href="/services">All services</a><a href="/work">Project details</a><a href="/about">About</a><a href="/contact">Contact</a><a href="/pricing">Pricing</a><a href="/global-services">Working internationally</a><a href="/faq">FAQ</a><a href="/blog">Blog</a><a href="/feed.xml">Blog RSS feed</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><button type="button" class="analytics-settings" data-analytics-settings hidden>Analytics settings</button></div></div>`;
 }
 
 const readTemplate = () =>
@@ -278,7 +288,7 @@ export async function renderHome() {
     /<script src="(\/reference\/[^\"]+\.js)"><\/script>/g,
     '<script defer src="$1"></script>',
   );
-  html = html.replace(/(<main\b[^>]*>)/, `$1${quickAnswer(homeAnswer)}`).replace('</main>', `${revisionNote()}</main>`);
+  html = html.replace(/(<main\b[^>]*>)/, `$1${quickAnswer(homeAnswer)}`).replace('</main>', `${trustMarkup()}${revisionNote()}</main>`);
   return html;
 }
 
@@ -286,7 +296,7 @@ function revisionNote() {
   return `<p class="wrap seo-revision">By <a href="/about">TheBenzzCreations</a> ? Last updated <time datetime="${CONTENT_UPDATED}">${CONTENT_UPDATED}</time></p>`;
 }
 function quickAnswer(answer: string) {
-  return `<section class="wrap seo-content quick-answer" aria-label="Quick answer"><h2>Quick answer</h2><p>${escapeHtml(answer)}</p></section>`;
+  return `<section class="wrap seo-content quick-answer" aria-label="Quick answer"><p><strong>Quick answer</strong></p><p>${escapeHtml(answer)}</p></section>`;
 }
 function breadcrumbs(items: [string, string][]) {
   return `<nav class="seo-breadcrumbs" aria-label="Breadcrumb"><ol>${items.map(([name, href], index) => `<li>${index === items.length - 1 ? `<span aria-current="page">${escapeHtml(name)}</span>` : `<a href="${href}">${escapeHtml(name)}</a>`}</li>`).join("")}</ol></nav>`;
@@ -308,9 +318,9 @@ export async function pageShell(
       .match(/<footer[\s\S]*?<\/footer>/)?.[0]
       .replace(/href="#/g, 'href="/#')
       .replace("</footer>", `${seoFooter()}</footer>`) || "";
-  const guides = service ? insights.filter((item) => item.service === service.slug || (item.tags || []).includes(service.slug)).concat(insights.filter(item => item.service !== service.slug).slice(0, 3)).filter((item, index, all) => all.findIndex(other => other.slug === item.slug) === index).slice(0, 6) : [];
+  const guides = service ? insights.filter((item) => item.service === service.slug || (item.tags || []).includes(service.slug)).concat(insights.filter(item => item.service !== service.slug).slice(0, 3)).filter((item, index, all) => all.findIndex(other => other.slug === item.slug) === index) : [];
   const reading = guides.length ? `<section class="wrap seo-content"><h2>Plan before you build</h2><div class="seo-service-grid">${guides.map((item) => `<article class="seo-card"><h3><a href="/blog/${item.slug}">${escapeHtml(item.h1)}</a></h3><p>${escapeHtml(item.description)}</p></article>`).join("")}</div></section>` : "";
-  return `<!DOCTYPE html><html lang="en-IN" class="no-js"><head>${renderHead(page, crumbs, service)}</head><body id="top" class="seo-page"><a class="skip" href="#main">Skip to content</a>${header}<main id="main" tabindex="-1"><div class="wrap">${breadcrumbs(crumbs)}</div>${service ? quickAnswer(serviceAnswers[service.slug]) : ""}${content}${entityContent(page.path)}${reading}${revisionNote()}</main>${footer}<script defer src="/reference/navigation.js"></script></body></html>`;
+  return `<!DOCTYPE html><html lang="en-IN" class="no-js"><head>${renderHead(page, crumbs, service)}</head><body id="top" class="seo-page"><a class="skip" href="#main">Skip to content</a>${header}<main id="main" tabindex="-1"><div class="wrap">${breadcrumbs(crumbs)}</div>${service ? quickAnswer(serviceAnswers[service.slug]) : ""}${content}${entityContent(page.path)}${reading}${trustMarkup()}${revisionNote()}</main>${footer}<script defer src="/reference/navigation.js"></script></body></html>`;
 }
 
 function serviceCards(items: Service[]) {
@@ -432,6 +442,7 @@ export async function renderInformation(pathname: string) {
 }
 
 export async function renderResource(pathname: string) {
+  if (/^\/blog\/(category|tag|page)\//.test(pathname)) return renderBlogArchive(pathname);
   const page = publicPages.find((item) => item.path === pathname);
   if (!page) return undefined;
   const guide = insights.find((item) => pathname === `/blog/${item.slug}`);
@@ -440,7 +451,7 @@ export async function renderResource(pathname: string) {
     if (guide) crumbs.push([guide.h1, pathname]);
     return pageShell(page, crumbs, guide
       ? renderEditorialArticle(guide, insights, SITE_ORIGIN)
-      : renderEditorialIndex(insights) + contactBand());
+      : renderEditorialIndex(insights.slice(0, PAGE_SIZE)) + blogNavigation() + contactBand());
   }
   const content = pathname === "/faq"
     ? `<section class="wrap seo-intro"><p class="mono">Project questions / Practical answers</p><h1>Before we build.<span>Your questions, answered.</span></h1><p>Explore scope, technology choices, estimates and international collaboration. Project-specific commitments are confirmed in your proposal.</p></section><div class="wrap seo-content"><div class="faq-search" hidden><label for="faq-query">Search questions and answers</label><input id="faq-query" type="search" autocomplete="off" placeholder="Try payments, timeline or source code"><p id="faq-results" role="status" aria-live="polite"></p></div><nav class="faq-categories" aria-label="FAQ categories">${[...new Set(faqs.map((item) => item.category))].map((category, i) => `<a href="#category-${i}">${escapeHtml(category)}</a>`).join("")}</nav>${[...new Set(faqs.map((item) => item.category))].map((category, i) => `<section data-faq-category id="category-${i}"><h2>${escapeHtml(category)}</h2><div class="fq">${faqs.filter((item) => item.category === category).map((item) => `<details id="${item.id}" data-faq><summary>${escapeHtml(item.question)}<span class="pl" aria-hidden="true">+</span></summary><p>${escapeHtml(item.answer)} <a href="${item.path}">${escapeHtml(item.link)}</a>.</p></details>`).join("")}</div></section>`).join("")}</div><script defer src="/reference/faq.js"></script>`
@@ -448,4 +459,16 @@ export async function renderResource(pathname: string) {
       ? `<section class="wrap seo-intro"><p class="mono">New Delhi / Working worldwide</p><h1>International projects.<span>A clear way to work together.</span></h1><p>Custom websites, mobile apps, business software and automation for startups and growing businesses. Based in New Delhi, India, we welcome remote enquiries from the United States, United Kingdom, Canada, UAE including Dubai, and worldwide.</p><a class="btn" href="/#contact">Discuss your project</a></section><section class="wrap seo-content seo-detail"><div><h2>Start with the business workflow</h2><p>Share the audience, the task they need to complete and the systems already in place. Separate essential launch features from later ideas. We review the requirements before agreeing deliverables, dependencies and a schedule.</p><h2>Plan reviews across time zones</h2><p>Tell us your country and time zone when enquiring. Meeting overlap, communication channels, decision makers and feedback milestones are agreed for the engagement. Consolidated written feedback helps keep asynchronous work clear.</p><h2>Design for the market you serve</h2><p>A US or Canadian launch may need regional date formats, multiple time zones and suitable payment options. UK projects may need their own content and billing conventions. UAE projects may involve AED pricing or a separately scoped Arabic interface. India-focused products may need INR and local payment workflows. These are discovery questions, not default features or claims of regulatory compliance.</p><p>Currency, payment provider availability, invoicing, privacy requirements and data hosting constraints depend on your business and customers. Your team approves business rules and obtains any specialist advice needed; technical requirements are agreed before implementation.</p><h2>Make launch responsibilities explicit</h2><p>Define who provides content, approves designs, owns domains and provider accounts, tests the workflow and maintains the system. Confirm source-code terms, third-party fees and support scope in the proposal. We do not list overseas offices or promise round-the-clock availability.</p></div><aside class="seo-card"><h2>A useful first message</h2><ul><li>Your business and intended users</li><li>Country, time zone and review availability</li><li>Core workflow and essential features</li><li>Existing website or system integrations</li><li>Target launch date and constraints</li><li>Optional budget range</li></ul><a href="/blog/website-project-brief">Prepare your brief</a><p><a href="/pricing">How project estimates work</a></p></aside></section><section class="wrap seo-content"><h2>Choose a starting point</h2>${serviceCards(services.slice(0, 5))}<p><a href="/faq#international">International project FAQs</a> · <a href="/about">Meet the studio</a> · <a href="/work">Published projects</a></p></section>`
       : "";
   return pageShell(page, [["Home", "/"], [pathname === "/faq" ? "FAQ" : "Working internationally", pathname]], content + contactBand());
+}
+
+function blogNavigation(current = 1) {
+  const pages = Math.ceil(insights.length / PAGE_SIZE);
+  return `<nav class="wrap seo-content" aria-label="Blog pages">${Array.from({ length: pages }, (_, index) => `<a href="${index ? `/blog/page/${index + 1}` : "/blog"}"${index + 1 === current ? ' aria-current="page"' : ""}>Blog page ${index + 1}</a>`).join(" ? ")}</nav><nav class="wrap seo-content" aria-label="Blog categories and tags">${archivesFor(insights).filter(item => item.kind !== "page").map(item => `<a href="${item.path}">${escapeHtml(item.label.replaceAll("-", " "))} ${item.kind === "tag" ? "tag" : "guides"}</a>`).join(" ? ")}</nav>`;
+}
+export async function renderBlogArchive(pathname: string) {
+  const archive = archivesFor(insights).find(item => item.path === pathname);
+  const page = publicPages.find(item => item.path === pathname);
+  if (!archive || !page) return undefined;
+  const content = renderEditorialIndex(archive.articles).replace(/<h1>[\s\S]*?<\/h1>/, `<h1>${escapeHtml(archive.label.replaceAll("-", " "))} ${archive.kind === "page" ? "" : archive.kind === "tag" ? "topic guides" : "category guides"}</h1>`);
+  return pageShell(page, [["Home", "/"], ["Blog", "/blog"], [archive.label, pathname]], content + blogNavigation(archive.kind === "page" ? Number(archive.label.slice(5)) : 0));
 }

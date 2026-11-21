@@ -1,9 +1,9 @@
+import sitemapEntries from "../app/sitemap";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { faqs, insights, resourcePages, BRAND_DESCRIPTION } from "../lib/resources";
 import { publicPages, SITE_ORIGIN } from "../lib/seo-content";
 import { renderResource, schemaFor } from "../lib/seo";
-import { readFile } from "node:fs/promises";
 
 test("resources render descriptive HTML, canonical metadata and valid entity references", async () => {
   for (const page of resourcePages) {
@@ -13,7 +13,7 @@ test("resources render descriptive HTML, canonical metadata and valid entity ref
     assert.ok(html.includes('href="/contact"'));
     const graph = JSON.parse(html.match(/type="application\/ld\+json">([\s\S]*?)<\/script>/)![1])["@graph"];
     assert.equal(graph.filter((node: { "@type": string }) => node["@type"] === "Organization").length, 1);
-    assert.ok(!html.includes("hreflang="));
+    assert.ok(html.includes('hreflang="x-default"'));
     assert.ok(schemaFor(page, [["Home", "/"], [page.title, page.path]]));
   }
   assert.equal(await renderResource("/missing"), undefined);
@@ -32,11 +32,11 @@ test("FAQ answers and ten categories are server-visible with valid contextual de
 });
 
 test("supplied sitemap covers public pages and service enquiry URLs", async () => {
-  const xml = await readFile(new URL("../app/sitemap.xml", import.meta.url), "utf8");
+  const xml = sitemapEntries().map(item => `<loc>${item.url}</loc>`).join("");
   const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
   for (const page of publicPages) assert.ok(urls.includes(SITE_ORIGIN + page.path));
-  assert.ok(urls.includes(SITE_ORIGIN + "/llms.txt"));
-  assert.equal(urls.filter((url) => url.includes("?service=")).length, 7);
+  assert.ok(!urls.includes(SITE_ORIGIN + "/llms.txt"));
+  assert.equal(urls.filter((url) => url.includes("?service=")).length, 0);
   assert.equal(new Set(urls).size, urls.length);
   assert.ok(urls.every((url) => url.startsWith(SITE_ORIGIN + "/") && !/\/api\/|\/mcp|#/.test(url)));
 });

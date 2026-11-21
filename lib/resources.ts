@@ -1,3 +1,6 @@
+import { approvedPricingContent } from "./editorial-pricing";
+import { archivesFor, archiveMetadata } from "./blog-archives";
+import { loadArticles } from "./content-loader";
 import { flagshipArticles } from "./editorial";
 import { buyingGuides } from "./editorial-buying-guides";
 import type { EditorialArticle } from "./editorial-types";
@@ -30,7 +33,7 @@ export const faqs: Faq[] = [
 const legacyInsights = [
   {
     slug: "website-project-brief", key: "website-project-brief", title: "Prepare a Website Project Brief | TheBenzzCreations",
-    description: "Prepare a useful website brief with audience, user journeys, content, integrations, budget, acceptance criteria and launch responsibilities before requesting quotes.",
+    description: "Prepare a website brief: audience, user journeys, content, integrations, budget and acceptance criteria and launch responsibilities before requesting quotes.",
     h1: "What to prepare before hiring a website development agency",
     intro: "A useful brief explains the decisions a website must support. You do not need a finished technical specification, but clear inputs make scope and estimates easier to compare.",
     service: "website-development",
@@ -60,7 +63,7 @@ const legacyInsights = [
   },
 ];
 
-export const insights: EditorialArticle[] = [
+const existingInsights: EditorialArticle[] = [
   ...flagshipArticles,
   ...buyingGuides,
   ...legacyInsights.map((article): EditorialArticle => ({
@@ -79,7 +82,11 @@ export const insights: EditorialArticle[] = [
   })),
 ];
 
+const authored = loadArticles().map(article => ({ ...article, category: existingInsights.find(existing => existing.category.toLowerCase() === article.category.toLowerCase())?.category || article.category }));
+export const insights: EditorialArticle[] = [...existingInsights.filter(item => !authored.some(article => article.slug === item.slug)), ...authored].map(approvedPricingContent);
+
 export const resourcePages = [
+  ...archivesFor(insights).map(archiveMetadata),
   { path: "/faq", key: "faq", title: "Development, Pricing & Project FAQs | TheBenzzCreations", description: "Answers about websites, mobile apps, software, e-commerce, AI integration, project estimates, support and working remotely with TheBenzzCreations worldwide." },
   { path: "/global-services", key: "global-services", title: "International Development Services | TheBenzzCreations", description: "Work remotely with our New Delhi development studio from the US, UK, Canada, UAE, India or elsewhere. Plan scope, reviews, integrations and project handover." },
   { path: "/blog", key: "insights", title: "Business Technology & Development Guides | TheBenzzCreations", description: "Practical website, app, e-commerce and AI automation guides for business owners: compare platforms, plan budgets and choose the right systems before building." },
