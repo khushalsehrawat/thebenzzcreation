@@ -1,4 +1,5 @@
 import { flagshipArticles } from "./editorial";
+import { buyingGuides } from "./editorial-buying-guides";
 import type { EditorialArticle } from "./editorial-types";
 
 // Editorial dates describe this revision, never a build or request timestamp.
@@ -61,6 +62,7 @@ const legacyInsights = [
 
 export const insights: EditorialArticle[] = [
   ...flagshipArticles,
+  ...buyingGuides,
   ...legacyInsights.map((article): EditorialArticle => ({
     ...article,
     answer: article.intro,

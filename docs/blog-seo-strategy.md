@@ -1,6 +1,16 @@
 # Blog editorial and search strategy
 
-Editorial revision: 20 November 2026. Implementation is local; deployment is a separate owner action.
+Editorial revision: 21 November 2026. Implementation is local; deployment is a separate owner action.
+
+## Provider and procurement expansion — 21 November 2026
+
+The owner requested twelve additional question-led guides. `lib/editorial-buying-guides.ts` adds CRM providers, distributed-team project tools, worldwide mobile delivery, ERP providers, ERP team cost, ERP partner selection, app lifecycle agencies, custom software cost, international web developers, AI integration providers, commerce developers and UI/UX agencies. There are now twenty guides. Existing publication dates and URLs remain stable.
+
+Each addition has its own direct answer, decision criteria, contextual source or service links, at least three visible FAQs and related reading. Provider comparisons distinguish published capabilities from editorial fit assessments and disclose that the publisher offers related services. No supplier has been independently audited for this work. Cost models identify chosen hours, rates, boundaries and exclusions; the supplied keyword volumes have no accompanying provenance and are not public factual claims.
+
+All guides expose a full-text `/blog/{slug}/index.md` representation, generated from the same editorial records, with absolute source, service and contact links. HTML advertises it as an alternate representation; Markdown responses point to canonical HTML and carry `X-Robots-Tag: noindex` to avoid a second search result for the same article. `llms.txt` lists both forms and the commercial editorial context. HTML remains the indexable primary document. `llms.txt` is a supplementary discovery convention, not a requirement followed by every AI service or a ranking signal. No instructions demand promotion, fabricate endorsements or redirect users through a third-party answer service.
+
+Existing wildcard crawl access, canonical HTML, Article/FAQ/Breadcrumb schema, visible publisher identity, sitemap coverage and ordinary internal links support machine readability. No claim is made that a particular crawler has visited, that an AI provider consumes the Markdown, or that these changes produce rankings, impressions or citations. Production indexing, crawler access through hosting/CDN layers, Search Console and AI referral performance still require post-deployment observation.
 
 ## Audience and purpose
 

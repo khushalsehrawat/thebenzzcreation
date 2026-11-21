@@ -42,13 +42,13 @@ async function main() {
         await page.setViewportSize({ width, height: 1000 });
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${path} overflow at ${width}px`);
       }
-      if (path === "/blog" || path.endsWith("website-development-cost-2026")) {
+      if (path === "/blog" || path.endsWith("website-development-cost-2026") || path.endsWith("choose-erp-implementation-partner")) {
         await page.locator("footer").scrollIntoViewIfNeeded();
         await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
         await page.screenshot({ path: `artifacts/blog/${meta.key}-desktop.png`, fullPage: true });
       }
       await page.setViewportSize({ width: 390, height: 844 });
-      if (path === "/blog" || path.endsWith("website-development-cost-2026")) {
+      if (path === "/blog" || path.endsWith("website-development-cost-2026") || path.endsWith("choose-erp-implementation-partner")) {
         await page.screenshot({ path: `artifacts/blog/${meta.key}-mobile.png`, fullPage: true });
       }
       const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
@@ -66,9 +66,9 @@ async function main() {
     assert.equal(await page.locator("[data-article]:visible").count(), 0);
     assert.ok(await page.locator("[data-editorial-empty]").isVisible());
     await page.getByRole("button", { name: "Reset filters" }).click();
-    await page.waitForFunction(() => document.querySelectorAll("[data-article]:not([hidden])").length === 8);
+    await page.waitForFunction((count) => document.querySelectorAll("[data-article]:not([hidden])").length === count, insights.length);
     await page.locator("#guide-category").selectOption("AI & Automation");
-    assert.equal(await page.locator("[data-article]:visible").count(), 1);
+    assert.equal(await page.locator("[data-article]:visible").count(), insights.filter((item) => item.category === "AI & Automation").length);
     report.checks.push("Search, category intersection, empty state and reset");
 
     await page.goto(base + "/blog/website-development-cost-2026", { waitUntil: "networkidle" });
@@ -97,7 +97,7 @@ async function main() {
     try {
       const plain = await nojs.newPage();
       await plain.goto(base + "/blog");
-      assert.equal(await plain.locator("[data-article]").count(), 8);
+      assert.equal(await plain.locator("[data-article]").count(), insights.length);
       await plain.goto(base + "/blog/website-development-cost-2026");
       assert.ok((await plain.locator(".editorial-prose").innerText()).includes("USD 6,000"));
       await plain.locator(".editorial-faq summary").first().click();
@@ -107,7 +107,17 @@ async function main() {
 
     for (const slug of ["missing-guide", "website-development-cost-2025"]) {
       assert.equal((await context.request.get(base + "/blog/" + slug)).status(), 404);
+      assert.equal((await context.request.get(base + "/blog/" + slug + "/index.md")).status(), 404);
     }
+    for (const article of insights) {
+      const response = await context.request.get(`${base}/blog/${article.slug}/index.md`);
+      assert.equal(response.status(), 200);
+      assert.match(response.headers()["content-type"], /^text\/markdown/);
+      assert.equal(response.headers()["x-robots-tag"], "noindex");
+      assert.ok((await response.text()).includes(article.answer));
+      assert.equal(response.headers().link, `<${SITE_ORIGIN}/blog/${article.slug}>; rel="canonical"`);
+    }
+    report.checks.push("Article Markdown preserves direct answers and canonical attribution; unknown slugs return 404");
     for (const suffix of ["", ...insights.map(({ slug }) => "/" + slug)]) {
       const legacy = await context.request.get(base + "/insights" + suffix + "?ref=migration", { maxRedirects: 0 });
       assert.equal(legacy.status(), 308);
@@ -115,7 +125,7 @@ async function main() {
       assert.equal(destination.pathname, "/blog" + suffix);
       assert.equal(destination.search, "?ref=migration");
     }
-    report.checks.push("Nine permanent Insights redirects preserve article slugs and query strings");
+    report.checks.push("Permanent Insights redirects preserve article slugs and query strings");
     const xml = await (await context.request.get(base + "/sitemap.xml")).text();
     const sitemapUrls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
     assert.equal(sitemapUrls.length, new Set(sitemapUrls).size);

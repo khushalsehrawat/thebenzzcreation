@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { insights } from "../lib/resources";
 import {
   publicPages,
   services,
@@ -19,7 +20,7 @@ import {
 } from "../lib/seo";
 
 test("canonical registry contains unique real public pages and metadata", () => {
-  assert.equal(publicPages.length, 29);
+  assert.equal(publicPages.length, 21 + insights.length);
   for (const key of ["path", "title", "description"] as const)
     assert.equal(
       new Set(publicPages.map((page) => page[key])).size,

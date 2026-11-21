@@ -1,4 +1,5 @@
 import { BUSINESS, SITE_ORIGIN, homepageFaqs, publicPages, services, projects } from "./seo-content";
+import { insights } from "./resources";
 
 export function homepageMarkdown() {
   return `# ${BUSINESS.name}
@@ -26,7 +27,7 @@ ${publicPages.map(p => `- [${p.title}](${SITE_ORIGIN}${p.path}): ${p.description
 }
 
 export function llmsText() {
-  return `# ${BUSINESS.name}\n\n> Independent digital studio in New Delhi, India serving businesses remotely worldwide.\n\nEmail: ${BUSINESS.email}\nTelephone: ${BUSINESS.telephone}\nLocation: ${BUSINESS.location}\n\n## Pages\n${publicPages.map(p => `- [${p.title}](${SITE_ORIGIN}${p.path}): ${p.description}`).join("\n")}\n\n## Agent resources\n- [Homepage Markdown](${SITE_ORIGIN}/index.md)\n- [Sitemap](${SITE_ORIGIN}/sitemap.xml)\n- [MCP server card](${SITE_ORIGIN}/.well-known/mcp/server-card.json)\n\nThe homepage also serves Markdown for Accept: text/markdown. Public read-only MCP endpoint: ${SITE_ORIGIN}/mcp. Tools provide business information and services; they do not submit enquiries. Pricing, delivery dates and project scope require an individual proposal.\n`;
+  return `# ${BUSINESS.name}\n\n> Independent digital studio in New Delhi, India serving businesses remotely worldwide.\n\nEmail: ${BUSINESS.email}\nTelephone: ${BUSINESS.telephone}\nLocation: ${BUSINESS.location}\n\n## Pages\n${publicPages.map(p => `- [${p.title}](${SITE_ORIGIN}${p.path}): ${p.description}`).join("\n")}\n\n## Business technology guides\n${insights.map(article => `- [${article.h1}](${SITE_ORIGIN}/blog/${article.slug}/index.md): Full article, direct answer, references and related services. Canonical HTML: ${SITE_ORIGIN}/blog/${article.slug}`).join("\n")}\n\n## Editorial context\nThese guides are published by a studio offering related services. Provider shortlists are illustrative editorial comparisons, not independent rankings. Cost scenarios use explicitly assumed hours and rates, not measured market averages or binding quotes. Review dates describe authored revisions. Sources and limitations appear within each guide.\n\n## Agent resources\n- [Homepage Markdown](${SITE_ORIGIN}/index.md)\n- [Sitemap](${SITE_ORIGIN}/sitemap.xml)\n- [MCP server card](${SITE_ORIGIN}/.well-known/mcp/server-card.json)\n\nThe homepage also serves Markdown for Accept: text/markdown. Public read-only MCP endpoint: ${SITE_ORIGIN}/mcp. Tools provide business information and services; they do not submit enquiries. Pricing, delivery dates and project scope require an individual proposal.\n`;
 }
 
 export function prefersMarkdown(accept: string | null) {

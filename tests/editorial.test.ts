@@ -3,13 +3,14 @@ import test from "node:test";
 import { readFile } from "node:fs/promises";
 import { insights } from "../lib/resources";
 import { flagshipArticles } from "../lib/editorial";
+import { buyingGuides } from "../lib/editorial-buying-guides";
 import { articleText, readingMinutes } from "../lib/editorial-types";
 import { publicPages, SITE_ORIGIN } from "../lib/seo-content";
 import { renderResource, renderService } from "../lib/seo";
 
 test("six distinct flagship guides preserve existing slugs and have resolvable topic links", async () => {
   assert.equal(flagshipArticles.length, 6);
-  assert.equal(insights.length, 8);
+  assert.equal(insights.length, flagshipArticles.length + buyingGuides.length + 2);
   for (const slug of ["website-project-brief", "custom-software-vs-off-the-shelf"]) {
     assert.ok(insights.some((item) => item.slug === slug));
   }
@@ -60,7 +61,7 @@ test("hub and services expose the topic cluster without requiring browser JavaSc
     assert.ok(html.includes(`href="/blog/${article.slug}"`));
     assert.ok((await renderService(article.service))!.includes(`href="/blog/${article.slug}"`));
   }
-  assert.equal((html.match(/data-article /g) || []).length, 8);
+  assert.equal((html.match(/data-article /g) || []).length, insights.length);
   assert.match(html, /data-editorial-filters hidden/);
   assert.match(html, /"@type":"Blog"/);
   const automation = flagshipArticles.find((article) => article.slug === "ai-automation-for-small-business")!;

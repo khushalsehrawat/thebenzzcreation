@@ -1,15 +1,17 @@
 # Blog internal linking
 
-Implemented 20 November 2026. Routes below are canonical paths on the existing www domain.
+Updated 21 November 2026. Routes below are canonical paths on the existing www domain.
 
 ## Discovery paths
 
 - The shared navigation now includes Blog. The existing footer guide link remains.
 - The homepage retains its planning-guide entry point.
-- `/blog` features the startup cornerstone and exposes all eight guides in initial HTML.
+- `/blog` features the startup cornerstone and exposes all twenty guides in initial HTML.
 - Article breadcrumbs return to Home and Blog. Related reading links form a bounded, deliberate topic cluster.
 - Related service pages show matching guides. `llms.txt`, Markdown homepage resources and existing read-only discovery tools use the expanded public registry automatically.
-- The static sitemap contains 37 URLs. The original nine hub/article entries now use `/blog`; unrelated supplied URLs, including the previously requested query URLs, remain preserved. Old `/insights` URLs redirect permanently and are excluded from the sitemap. Sitemap membership does not guarantee indexing.
+- The static sitemap contains 49 URLs after the twelve-guide expansion. All hub/article entries use `/blog`; unrelated supplied URLs, including the previously requested query URLs, remain preserved. Old `/insights` URLs redirect permanently and are excluded from the sitemap. Sitemap membership does not guarantee indexing.
+- All twenty guides expose full-text Markdown at `/blog/{slug}/index.md`, advertised by HTML alternate links and `llms.txt`. Markdown cites the canonical article, sources, related guides, service and contact URLs. It is excluded from independent search indexing with a response header; canonical HTML stays in the sitemap.
+- The twelve buying guides in `lib/editorial-buying-guides.ts` each point to three related guides and the matching existing service. The ERP comparison, budget and partner-selection guides link as a procurement cluster. Other additions connect to the existing app, website, commerce, AI and build-versus-buy guides. Their complete intent/service map is in `blog-keyword-map.md`.
 
 ## Guide-to-guide and commercial mapping
 

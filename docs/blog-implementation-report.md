@@ -1,5 +1,23 @@
 # Blog implementation report
 
+## Expansion completed locally — 21 November 2026
+
+Added all twelve requested buying guides in `lib/editorial-buying-guides.ts`, bringing the blog to twenty articles. They answer the cleaned questions directly, with distinct procurement criteria, comparison or budgeting tables where useful, at least three FAQs each, official reference links, related reading and relevant studio service/contact links. Provider lists disclose the publisher's commercial role; assumptions and unverified credentials are not presented as established facts. Supplied keyword-volume figures are omitted because their source and measurement context were not provided.
+
+All twenty articles now have full-text Markdown at `/blog/{slug}/index.md`, produced from the same editorial data. The alternate is advertised in the HTML head and `llms.txt`; responses retain canonical attribution and use `X-Robots-Tag: noindex`. This supplements the indexable HTML rather than creating a second canonical article tree. No AI promotion instructions or external promotional posts were added. Crawl permissions remain open for public pages; production hosting and indexing have not been verified.
+
+Twelve canonical articles were added to the sitemap (49 entries total). The existing asset generator produced twelve additional social JPEGs and three responsive WebP widths per article. Existing articles keep their publication dates. The new guides use the authoring/review date 21 November 2026.
+
+Validation for this revision:
+
+- `npm test`: 31 passing tests, including Markdown content/source parity, comparison-table conversion, canonical attribution, unknown-article 404s and existing schema/navigation coverage.
+- `npm run typecheck` and `npm run lint`: passed.
+- `npm run build`: passed, including static HTML and Markdown generation for all twenty articles.
+- `npm run test:blog` against the production build: 21 pages, four viewport widths (390, 768, 1024 and 1440), zero detected axe violations and no browser errors. Seven behavior groups cover filtering, keyboard FAQ/share controls, analytics consent, no-JavaScript content, Markdown responses, legacy redirects and crawl/link integrity.
+- ERP partner-guide mobile screenshot visually inspected. Screenshots and machine-readable results are under ignored `artifacts/blog/`.
+
+No deployment, search-engine submission, AI-service submission, Git commit/push or third-party message was performed. Rankings, impressions and AI citations require post-deployment measurement and are not guaranteed. The original implementation record follows as historical context.
+
 Completed locally on 20 November 2026. No deployment, Git commit/push, Search Console submission or external promotional posting was performed.
 
 ## Audit and architecture
