@@ -37,3 +37,7 @@
 .links{gap:clamp(.65rem,1.2vw,1.2rem)}
 
 .quick-answer{border-left:3px solid currentColor;padding:1rem 1.5rem;margin-top:2rem}.quick-answer h2{font-size:1rem}.seo-revision{font-size:.875rem;padding-block:2rem}.seo-content table{width:100%;border-collapse:collapse}.seo-content td,.seo-content th{padding:.75rem;border:1px solid #555;text-align:left}.seo-content dl{display:grid;grid-template-columns:1fr 2fr;gap:.75rem}.seo-content dd{margin:0}@media(max-width:600px){.seo-content table{display:block;overflow-x:auto}.seo-content dl{grid-template-columns:1fr}}
+.cl h2 span{color:#9e1730}
+
+body:not(.seo-page) main > .quick-answer{margin-top:6rem}
+.bd .mockup-heading{font:700 1.6rem/1 var(--head);letter-spacing:-.05em;margin:.7rem 0 1rem;text-transform:uppercase}

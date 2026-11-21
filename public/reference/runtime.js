@@ -4,7 +4,7 @@ const rm=matchMedia('(prefers-reduced-motion:reduce)').matches,fine=matchMedia('
 /* ================= mockups ================= */
 const M=c=>`<div class="mk">${c}</div>`,TT='<span class="t"></span>';
 const PV={
-web:()=>M(`<div class="bar"><i></i><i></i><i></i></div><div class="bd"><span class="t sh"></span><h4>Built to convert.</h4><span class="t sh" style="width:70%"></span><b class="bt">Get a quote</b><div class="tl"><div><em class="cnt">128</em>visits</div><div><em class="cnt">14</em>enquiries</div></div></div>`),
+web:()=>M(`<div class="bar"><i></i><i></i><i></i></div><div class="bd"><span class="t sh"></span><p class="mockup-heading">Built to convert.</p><span class="t sh" style="width:70%"></span><b class="bt">Get a quote</b><div class="tl"><div><em class="cnt">128</em>visits</div><div><em class="cnt">14</em>enquiries</div></div></div>`),
 mob:()=>M(`<div class="ph"><s></s>${'<div class="row"><i></i><span class="t"></span><b></b></div>'.repeat(4)}</div>`),
 dash:()=>M(`<div class="bar"><i></i><i></i><i></i></div><div class="g3"><div>Orders<em class="cnt">128</em></div><div>Pending<em class="cnt">14</em></div><div>Low stock<em class="cnt">6</em></div></div><div class="bars"><i style="--h:40%"></i><i style="--h:60%"></i><i style="--h:45%"></i><i style="--h:85%"></i><i style="--h:100%"></i><i style="--h:70%"></i></div>`),
 wf:()=>M(`<div class="fw"><span class="nd">Request</span><i class="cn"><b></b></i><span class="nd r">AI sorts</span><i class="cn"><b></b></i><span class="nd">Team approves</span></div><div class="fwl">DRAFT REPLY READY / HUMAN IN THE LOOP</div>`),

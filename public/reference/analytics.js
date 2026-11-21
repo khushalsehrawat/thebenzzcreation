@@ -61,12 +61,6 @@
     if (!loaded) {
       loaded = true;
       window.gtag("js", new Date());
-      window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
-      const container = document.createElement("script");
-      container.async = true;
-      container.src = "https://www.googletagmanager.com/gtm.js?id=GTM-PGV57RK3";
-      container.dataset.consent = "analytics";
-      document.head.append(container);
       window.gtag("config", id, {
         send_page_view: false,
         allow_google_signals: false,
@@ -182,6 +176,19 @@
       service: event.detail.service,
       form_id: "project_enquiry",
       lead_source: "website_enquiry",
+    });
+  });
+  document.addEventListener("click", (event) => {
+    if (!id || choice !== "granted") return;
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+    const href = link.getAttribute("href") || "";
+    const eventName = /^(https:\/\/(wa\.me|api\.whatsapp\.com))/.test(href) ? "whatsapp_click"
+      : href.startsWith("tel:") ? "call_click"
+      : link.matches(".btn, [data-track-cta]") ? "cta_click" : "";
+    if (eventName) window.gtag("event", eventName, {
+      link_type: eventName.replace("_click", ""),
+      page_location: safeLocation(),
     });
   });
   if (choice === "granted") loadAnalytics();
