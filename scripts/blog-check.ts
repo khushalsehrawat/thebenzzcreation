@@ -51,7 +51,7 @@ async function main() {
       if (path === "/blog" || path.endsWith("website-development-cost-2026") || path.endsWith("choose-erp-implementation-partner")) {
         await page.screenshot({ path: `artifacts/blog/${meta.key}-mobile.png`, fullPage: true });
       }
-      const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+      const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"]).analyze();
       assert.equal(result.violations.length, 0, `${path}: ${JSON.stringify(result.violations.map(({ id, nodes }) => ({ id, elements: nodes.map(({ target }) => target) })))}`);
       const missing = await page.locator("main img").evaluateAll((images) => images.filter((image) => !(image as HTMLImageElement).complete || !(image as HTMLImageElement).naturalWidth).map((image) => (image as HTMLImageElement).src));
       // Related cards are lazy: validate their assets through HTTP below.

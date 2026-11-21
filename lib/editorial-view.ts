@@ -7,7 +7,7 @@ const image = (article: EditorialArticle, eager = false) => `<img src="/social/$
 const meta = (article: EditorialArticle) => `<p class="editorial-meta"><span>${e(article.category)}</span><span><time datetime="${article.published}">${dateLabel(article.published)}</time></span><span>${readingMinutes(article)} min read</span></p>`;
 
 function card(article: EditorialArticle) {
-  return `<article class="editorial-card" data-article data-category="${e(article.category)}" data-search="${e([article.h1, article.description, article.category].join(" ").toLowerCase())}"><a class="editorial-card-image" href="${url(article)}" tabindex="-1" aria-hidden="true">${image(article)}</a><div>${meta(article)}<h2><a href="${url(article)}">${e(article.h1)}</a></h2><p>${e(article.description)}</p><a class="editorial-read" href="${url(article)}" aria-label="Read ${e(article.h1)}">Read guide</a></div></article>`;
+  return `<article class="editorial-card" data-article data-category="${e(article.category)}" data-search="${e([article.h1, article.description, article.category].join(" ").toLowerCase())}"><a class="editorial-card-image" href="${url(article)}" tabindex="-1" aria-hidden="true">${image(article)}</a><div>${meta(article)}<h2><a href="${url(article)}">${e(article.h1)}</a></h2><p>${e(article.description)}</p><a class="editorial-read" href="${url(article)}" aria-label="Read guide: ${e(article.h1)}">Read guide</a></div></article>`;
 }
 
 export function renderEditorialIndex(articles: EditorialArticle[]) {

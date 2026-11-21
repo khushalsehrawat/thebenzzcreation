@@ -127,6 +127,8 @@ export function schemaFor(
         "@type": "Article", "@id": `${url}#article`, headline: item.h1,
         description: item.description, datePublished: item.published, dateModified: item.updated,
         mainEntityOfPage: { "@id": `${url}#webpage` }, publisher: { "@id": organizationId },
+        author: { "@id": organizationId },
+        ...(item.sources.length ? { citation: item.sources.map(({ label, url: sourceUrl }) => ({ "@type": "CreativeWork", name: label, url: sourceUrl })) } : {}),
         image: `${SITE_ORIGIN}/social/${page.key}.jpg`, inLanguage: "en",
         articleSection: item.category, isPartOf: { "@id": `${SITE_ORIGIN}/blog#blog` },
         ...(item.faqs.length ? { hasPart: { "@id": `${url}#faq` } } : {}),
@@ -170,6 +172,7 @@ export function renderHead(
 ) {
   const url = absoluteUrl(page.path),
     image = `${SITE_ORIGIN}/social/${page.key}.jpg`;
+  const article = insights.find((item) => page.path === `/blog/${item.slug}`);
   // Preserve the public ownership token already published by the verified live domain.
   const verification =
     process.env.GOOGLE_SITE_VERIFICATION ??
@@ -177,7 +180,7 @@ export function renderHead(
   return `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${escapeHtml(page.title)}</title><meta name="description" content="${escapeHtml(page.description)}">
 <link rel="canonical" href="${url}">${insights.some((article) => page.path === `/blog/${article.slug}`) ? `<link rel="alternate" type="text/markdown" href="${url}/index.md">` : ""}<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta property="og:type" content="website"><meta property="og:site_name" content="TheBenzzCreations"><meta property="og:locale" content="en_IN"><meta property="og:url" content="${url}"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:image" content="${image}"><meta property="og:image:secure_url" content="${image}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${escapeHtml(page.title)}">
+<meta property="og:type" content="${article ? "article" : "website"}">${article ? `<meta property="article:published_time" content="${article.published}"><meta property="article:modified_time" content="${article.updated}"><meta property="article:section" content="${escapeHtml(article.category)}">` : ""}<meta property="og:site_name" content="TheBenzzCreations"><meta property="og:locale" content="en_IN"><meta property="og:url" content="${url}"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:image" content="${image}"><meta property="og:image:secure_url" content="${image}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${escapeHtml(page.title)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(page.title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${image}"><meta name="twitter:image:alt" content="${escapeHtml(page.title)}"><meta name="theme-color" content="#141518">
 ${verification ? `<meta name="google-site-verification" content="${escapeHtml(verification)}">` : ""}
 ${process.env.BING_SITE_VERIFICATION ? `<meta name="msvalidate.01" content="${escapeHtml(process.env.BING_SITE_VERIFICATION)}">` : ""}

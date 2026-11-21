@@ -38,6 +38,9 @@ test("article HTML, schema, FAQ answers and navigation agree", async () => {
     assert.equal(node.headline, article.h1);
     assert.equal(node.datePublished, article.published);
     assert.equal(node.dateModified, article.updated);
+    assert.equal(node.author["@id"], `${SITE_ORIGIN}/#organization`);
+    assert.deepEqual((node.citation || []).map((source: { url: string }) => source.url), article.sources.map((source) => source.url));
+    assert.ok(html.includes('<meta property="og:type" content="article">'));
     assert.ok(html.includes(`datetime="${article.updated}"`));
     const faq = graph.find((item: Record<string, unknown>) => item["@type"] === "FAQPage");
     assert.equal(faq?.mainEntity.length || 0, article.faqs.length);
@@ -62,6 +65,7 @@ test("hub and services expose the topic cluster without requiring browser JavaSc
     assert.ok((await renderService(article.service))!.includes(`href="/blog/${article.slug}"`));
   }
   assert.equal((html.match(/data-article /g) || []).length, insights.length);
+  assert.equal((html.match(/aria-label="Read guide: /g) || []).length, insights.length);
   assert.match(html, /data-editorial-filters hidden/);
   assert.match(html, /"@type":"Blog"/);
   const automation = flagshipArticles.find((article) => article.slug === "ai-automation-for-small-business")!;
