@@ -31,9 +31,10 @@ export type PageInfo = (typeof publicPages)[number];
 export function analyticsConfig() {
   // Public measurement ID verified in the existing live site's HTML. Empty override disables analytics.
   const candidate =
+    process.env.NEXT_PUBLIC_GA_ID ??
     process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ??
     process.env.GA4_MEASUREMENT_ID ??
-    "G-Q9JRF078F9";
+    "";
   return {
     measurementId: /^G-[A-Z0-9]{4,20}$/.test(candidate) ? candidate : "",
     consentVersion: 1,
@@ -179,7 +180,7 @@ export function renderHead(
     "8MsySZqeSGdkv-ve9SoSqPVqLD5NZ5vmL2MfO2t8LVI";
   return `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${escapeHtml(page.title)}</title><meta name="description" content="${escapeHtml(page.description)}">
-<link rel="canonical" href="${url}">${insights.some((article) => page.path === `/blog/${article.slug}`) ? `<link rel="alternate" type="text/markdown" href="${url}/index.md">` : ""}<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="${url}"><link rel="alternate" hreflang="x-default" href="${url}"><link rel="alternate" type="application/rss+xml" title="TheBenzzCreations Blog" href="/feed.xml">${insights.some((article) => page.path === `/blog/${article.slug}`) ? `<link rel="alternate" type="text/markdown" href="${url}/index.md">` : ""}<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta property="og:type" content="${article ? "article" : "website"}">${article ? `<meta property="article:published_time" content="${article.published}"><meta property="article:modified_time" content="${article.updated}"><meta property="article:section" content="${escapeHtml(article.category)}">` : ""}<meta property="og:site_name" content="TheBenzzCreations"><meta property="og:locale" content="en_IN"><meta property="og:url" content="${url}"><meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description)}"><meta property="og:image" content="${image}"><meta property="og:image:secure_url" content="${image}"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="${escapeHtml(page.title)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(page.title)}"><meta name="twitter:description" content="${escapeHtml(page.description)}"><meta name="twitter:image" content="${image}"><meta name="twitter:image:alt" content="${escapeHtml(page.title)}"><meta name="theme-color" content="#141518">
 ${verification ? `<meta name="google-site-verification" content="${escapeHtml(verification)}">` : ""}
@@ -217,7 +218,7 @@ export async function renderHome() {
   let html = await readTemplate();
   const page = corePages[0];
   html = html
-    .replace('<html lang="en">', '<html lang="en" class="no-js">')
+    .replace(/<html lang="en(?:-IN)?">/, '<html lang="en-IN" class="no-js">')
     .replace(
       /<head>[\s\S]*?<\/head>/i,
       `<head>${renderHead(page, [["Home", "/"]], undefined, true)}</head>`,
@@ -284,7 +285,7 @@ export async function pageShell(
       .replace("</footer>", `${seoFooter()}</footer>`) || "";
   const guides = service ? insights.filter((item) => item.service === service.slug) : [];
   const reading = guides.length ? `<section class="wrap seo-content"><h2>Plan before you build</h2><div class="seo-service-grid">${guides.map((item) => `<article class="seo-card"><h3><a href="/blog/${item.slug}">${escapeHtml(item.h1)}</a></h3><p>${escapeHtml(item.description)}</p></article>`).join("")}</div></section>` : "";
-  return `<!DOCTYPE html><html lang="en" class="no-js"><head>${renderHead(page, crumbs, service)}</head><body id="top" class="seo-page"><a class="skip" href="#main">Skip to content</a>${header}<main id="main" tabindex="-1"><div class="wrap">${breadcrumbs(crumbs)}</div>${content}${reading}</main>${footer}<script defer src="/reference/navigation.js"></script></body></html>`;
+  return `<!DOCTYPE html><html lang="en-IN" class="no-js"><head>${renderHead(page, crumbs, service)}</head><body id="top" class="seo-page"><a class="skip" href="#main">Skip to content</a>${header}<main id="main" tabindex="-1"><div class="wrap">${breadcrumbs(crumbs)}</div>${content}${reading}</main>${footer}<script defer src="/reference/navigation.js"></script></body></html>`;
 }
 
 function serviceCards(items: Service[]) {

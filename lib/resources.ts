@@ -29,8 +29,8 @@ export const faqs: Faq[] = [
 
 const legacyInsights = [
   {
-    slug: "website-project-brief", key: "website-project-brief", title: "What to Prepare Before Hiring a Web Agency | TheBenzzCreations",
-    description: "Prepare a practical website brief: audience, user journeys, content, integrations, budget, acceptance criteria and launch responsibilities before requesting quotes.",
+    slug: "website-project-brief", key: "website-project-brief", title: "Prepare a Website Project Brief | TheBenzzCreations",
+    description: "Prepare a useful website brief with audience, user journeys, content, integrations, budget, acceptance criteria and launch responsibilities before requesting quotes.",
     h1: "What to prepare before hiring a website development agency",
     intro: "A useful brief explains the decisions a website must support. You do not need a finished technical specification, but clear inputs make scope and estimates easier to compare.",
     service: "website-development",
@@ -45,7 +45,7 @@ const legacyInsights = [
   },
   {
     slug: "custom-software-vs-off-the-shelf", key: "custom-software-vs-off-the-shelf", title: "Custom Software vs Off-the-Shelf Tools | TheBenzzCreations",
-    description: "Compare custom software with existing business tools using workflow fit, integration access, migration, total operating costs and long-term maintenance responsibilities.",
+    description: "Compare custom software and existing tools using workflow fit, integrations, migration, operating costs and long-term maintenance before choosing your approach.",
     h1: "Custom software vs off-the-shelf tools: how to decide",
     intro: "Start with the workflow that is failing, then compare ways to improve it. Building a new system is one option; configuring or connecting existing software may solve the problem with less ongoing responsibility.",
     service: "custom-software-development",
@@ -80,7 +80,7 @@ export const insights: EditorialArticle[] = [
 ];
 
 export const resourcePages = [
-  { path: "/faq", key: "faq", title: "Development & Project FAQs | TheBenzzCreations", description: "Answers about websites, mobile apps, software, e-commerce, AI integration, project estimates, support and working remotely with TheBenzzCreations worldwide." },
+  { path: "/faq", key: "faq", title: "Development, Pricing & Project FAQs | TheBenzzCreations", description: "Answers about websites, mobile apps, software, e-commerce, AI integration, project estimates, support and working remotely with TheBenzzCreations worldwide." },
   { path: "/global-services", key: "global-services", title: "International Development Services | TheBenzzCreations", description: "Work remotely with our New Delhi development studio from the US, UK, Canada, UAE, India or elsewhere. Plan scope, reviews, integrations and project handover." },
   { path: "/blog", key: "insights", title: "Business Technology & Development Guides | TheBenzzCreations", description: "Practical website, app, e-commerce and AI automation guides for business owners: compare platforms, plan budgets and choose the right systems before building." },
   ...insights.map((item) => ({ path: `/blog/${item.slug}`, key: item.key, title: item.title, description: item.description })),

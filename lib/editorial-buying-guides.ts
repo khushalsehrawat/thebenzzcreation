@@ -181,7 +181,7 @@ const guides: Guide[] = [
   },
   {
     slug: "choose-erp-implementation-partner",
-    title: "How to Choose an ERP Implementation Partner",
+    title: "How to Choose an ERP Implementation Partner in 2026",
     description: "Choose an ERP implementation partner using platform evidence, industry references, named staffing, migration rehearsals, rollout gates and support terms.",
     h1: "How can a business choose an ERP implementation partner for planning, migration, and rollout?",
     intro: "Choose the team that can demonstrate your business process, explain migration risks and stay accountable after go-live. Use the same evidence-based selection process for every candidate.",
@@ -372,7 +372,7 @@ const guides: Guide[] = [
   },
   {
     slug: "ui-ux-design-agencies-apps-ecommerce",
-    title: "UI/UX Design Agencies for Apps and E-Commerce",
+    title: "UI/UX Design Agencies for Apps and E-Commerce: Guide",
     description: "Compare UI/UX design partners by research, checkout and app journeys, accessibility, reusable components, usability testing and engineering handover.",
     h1: "Which UI/UX design agencies are best for customer-facing apps and e-commerce platforms?",
     intro: "The best design partner for your product should improve a real customer journey and leave the engineering team with clear, implementable decisions.",

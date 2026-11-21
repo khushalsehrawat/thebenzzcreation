@@ -1,6 +1,7 @@
 import { resourcePages } from "./resources";
-export const SITE_ORIGIN = "https://www.thebenzzcreations.com";
-export const CONTENT_UPDATED = "2026-11-07";
+import { site } from "../src/lib/site";
+export const SITE_ORIGIN = site.url;
+export const CONTENT_UPDATED = site.updated;
 export const PRIMARY_MARKETS = [
   "India",
   "United States",
@@ -8,15 +9,7 @@ export const PRIMARY_MARKETS = [
   "United Arab Emirates",
   "Canada",
 ] as const;
-export const BUSINESS = {
-  name: "TheBenzzCreations",
-  email: "thebenzzcreationsofficial@gmail.com",
-  telephone: "+919899788325",
-  location: "New Delhi, India",
-  // Add only owner-confirmed profiles for the studio itself, not personal or project pages.
-  sameAs: ["https://www.instagram.com/thebenzzcreations/"],
-  address: { "@type": "PostalAddress", addressLocality: "New Delhi", addressRegion: "Delhi", addressCountry: "IN" },
-};
+export const BUSINESS = site;
 
 export type Service = {
   slug: string;
@@ -42,9 +35,9 @@ export const services: Service[] = [
   {
     slug: "website-development",
     name: "Website Development",
-    title: "Website Development Worldwide | TheBenzzCreations",
+    title: "Website Development for Businesses | TheBenzzCreations",
     description:
-      "Custom website development for India, the US, UK, UAE and Canada. Responsive websites and web apps with accessible design, technical SEO and clear enquiry journeys.",
+      "Custom websites for India, the US, UK, UAE and Canada. Plan responsive websites and web apps with accessible design, technical SEO and clear enquiry journeys.",
     eyebrow: "Custom websites / Worldwide collaboration",
     intro:
       "A business website should explain your offer, earn attention and make the next step obvious. We design and develop custom websites for businesses worldwide, with a focus on India, the United States, United Kingdom, United Arab Emirates and Canada.",
@@ -144,7 +137,7 @@ export const services: Service[] = [
     name: "Custom Software Development",
     title: "Custom Software Development Worldwide | TheBenzzCreations",
     description:
-      "Custom software development for teams worldwide, including India, the US, UK, UAE and Canada. Portals, dashboards and backend systems built around your workflows.",
+      "Custom software for teams in India, the US, UK, UAE and Canada. Plan portals, dashboards and backend systems around your business workflows and integrations.",
     eyebrow: "Business software / Connected operations",
     intro:
       "When spreadsheets and disconnected tools create extra work, custom software can bring the process together. We develop business systems for international teams around their roles, information and everyday tasks.",
@@ -304,7 +297,7 @@ export const services: Service[] = [
   {
     slug: "ui-ux-design",
     name: "UI/UX Design",
-    title: "UI/UX Design for Global Teams | TheBenzzCreations",
+    title: "UI/UX Design for Worldwide Teams | TheBenzzCreations",
     description:
       "UI/UX design for teams in India, the US, UK, UAE and Canada. Clear website and app journeys, wireframes, prototypes and interfaces ready for development.",
     eyebrow: "User journeys / Interface systems",
@@ -410,7 +403,7 @@ export const projects = [
   {
     slug: "nsar-workshop",
     name: "NSAR Workshop",
-    title: "NSAR Workshop Website Project | TheBenzzCreations",
+    title: "NSAR Workshop Website Case Study | TheBenzzCreations",
     description:
       "Explore the NSAR Workshop website: an institutional event interface organising workshop information, applications and a clear route to essential details.",
     external: "https://www.nsar2026.org/",
@@ -519,14 +512,14 @@ export const corePages = [
   {
     path: "/work",
     key: "work",
-    title: "Website & UI Portfolio | TheBenzzCreations",
+    title: "Website & Interface Project Portfolio | TheBenzzCreations",
     description:
-      "Explore NSAR Workshop, SwiftPDF and a therapist website: published website and interface projects from TheBenzzCreations, New Delhi.",
+      "Explore NSAR Workshop, SwiftPDF and a therapist website: published website and interface projects from TheBenzzCreations, a studio in New Delhi, India.",
   },
   {
     path: "/privacy",
     key: "privacy",
-    title: "Privacy & Analytics Choices | TheBenzzCreations",
+    title: "Website Privacy & Analytics Choices | TheBenzzCreations",
     description:
       "How TheBenzzCreations handles project enquiries, optional analytics, consent preferences and information you share with our New Delhi studio.",
   },
@@ -534,9 +527,9 @@ export const corePages = [
 
 export const informationPages = [
   { path: "/pricing", key: "pricing", title: "Project Pricing & Custom Quotes | TheBenzzCreations", description: "Explore website, app and software project options from TheBenzzCreations, what determines a custom quote, and how to request an estimate without logging in." },
-  { path: "/about", key: "about", title: "About Our Digital Studio | TheBenzzCreations", description: "Meet TheBenzzCreations, an independent digital studio in New Delhi building websites, apps, software and digital experiences for businesses worldwide." },
-  { path: "/contact", key: "contact", title: "Contact Our Digital Studio | TheBenzzCreations", description: "Contact TheBenzzCreations in New Delhi by email or telephone to discuss your website, app, software, design or automation project and next steps." },
-  { path: "/terms", key: "terms", title: "Website Terms of Use | TheBenzzCreations", description: "Read the website terms for TheBenzzCreations, including portfolio information, external links, project enquiries and how individual proposals define project scope." },
+  { path: "/about", key: "about", title: "About Our New Delhi Digital Studio | TheBenzzCreations", description: "Meet TheBenzzCreations, an independent digital studio in New Delhi building websites, apps, software and digital experiences for businesses worldwide." },
+  { path: "/contact", key: "contact", title: "Contact Our New Delhi Digital Studio | TheBenzzCreations", description: "Contact TheBenzzCreations in New Delhi by email or telephone to discuss your website, app, software, design or automation project and next steps." },
+  { path: "/terms", key: "terms", title: "Website Information & Terms of Use | TheBenzzCreations", description: "Read TheBenzzCreations website terms: portfolio information, external links, project enquiries and how individual proposals define deliverables and project scope." },
 ];
 
 export const publicPages = [
